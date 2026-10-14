@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t">
+  <title id="t">OneFlow — B Mảnh thả</title>
+  <g transform="translate(-8 8)" fill="#111">
+    <path d="M224 128 V160 A64 64 0 0 1 160 224 H96 A64 64 0 0 1 32 160 V96 A64 64 0 0 1 96 32 H128 V80 H96 A16 16 0 0 0 80 96 V160 A16 16 0 0 0 96 176 H160 A16 16 0 0 0 176 160 V128 Z"/>
+    <path transform="translate(16 -16)" d="M128 32 H160 A64 64 0 0 1 224 96 V128 H176 V96 A16 16 0 0 0 160 80 H128 Z"/>
+  </g>
+</svg>

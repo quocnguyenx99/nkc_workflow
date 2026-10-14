@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>OneFlow – Báo cáo &amp; Phê duyệt</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F6F8FB}
+a{color:#2F54EB}a:hover{color:#1E3CC2}
+button{font-family:inherit}
+textarea{font-family:inherit}
+.ghost:hover{background:#F2F4F8 !important}
+.navi:hover{background:#F2F4F8 !important}
+.exp{transition:border-color .15s, transform .15s}
+.exp:hover{transform:translateY(-1px)}
+.hero{background-color:#0B1220;background-image:radial-gradient(520px 300px at 0% 0%, rgba(47,84,235,.55), transparent 70%),radial-gradient(480px 300px at 100% 100%, rgba(110,70,240,.45), transparent 70%)}
+tr:hover td{background:#FAFBFD}
+</style>
+</helmet>
+<div style="font-family: 'Inter Display', 'Inter', Arial, sans-serif; font-optical-sizing: auto; color: #0B1220; background: #F6F8FB; min-height: 1760px; display: flex; flex-wrap: wrap">
+
+  <!-- SIDEBAR -->
+  <nav aria-label="Ứng dụng" style="flex: 1 1 210px; max-width: 224px; background: #FFFFFF; border-right: 1px solid #E7EAF0; padding: 18px 14px; display: flex; flex-direction: column; gap: 4px; box-sizing: border-box; font-size: 14px; color: #3B4559">
+    <a href="HomeV2.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; text-decoration: none; color: #0B1220">
+      <span style="width: 34px; height: 34px; border-radius: 10px; border: 1.5px dashed #A9B3C6; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #5B6478">LOGO</span>
+      <span style="font-size: 17px; font-weight: 800; letter-spacing: -.03em">One<span style="color: #2F54EB">Flow</span></span>
+    </a>
+    <a class="navi" href="HomeV2.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 40px; border-radius: 9px; color: #3B4559; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>Tổng quan</a>
+    <a class="navi" href="NhapLieuV2.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 40px; border-radius: 9px; color: #3B4559; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="18" height="7" rx="1.5"></rect></svg>Nhập liệu</a>
+    <a class="navi" href="BaoCaoV2.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 40px; border-radius: 9px; background: #EEF2FF; color: #1E3CC2; font-weight: 700; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="12"></line><line x1="12" y1="20" x2="12" y2="5"></line><line x1="18" y1="20" x2="18" y2="9"></line></svg>Báo cáo</a>
+    <a class="navi" href="BaoCaoV2.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 40px; border-radius: 9px; color: #3B4559; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"></path><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"></path></svg>Phê duyệt<span style="margin-left: auto; background: #FEF6E0; color: #92400E; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 999px">{{pendingCount}}</span></a>
+    <div style="margin: 20px 10px 6px; font-size: 11px; letter-spacing: .12em; color: #8A93A8; font-weight: 700">BÁO CÁO THEO PHÒNG</div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 36px; color: #0B1220; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 2px; background: #2F54EB"></span>Kinh doanh</div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 36px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #0E9F6E"></span>Kế toán</div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 36px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #6E46F0"></span>Nhân sự</div>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 10px; min-height: 36px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #F59E0B"></span>Kho vận</div>
+    <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #EEF0F4">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #0B1220; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">GĐ</span>
+      <span style="display: flex; flex-direction: column; gap: 1px"><span style="font-weight: 600; font-size: 13px; color: #0B1220">Nguyễn Quang Vinh</span><span style="font-size: 12px; color: #5B6478">Ban Giám đốc · Admin</span></span>
+    </div>
+  </nav>
+
+  <div style="flex: 999 1 900px; min-width: 0; display: flex; flex-direction: column">
+    <header style="background: #FFFFFF; border-bottom: 1px solid #E7EAF0; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <div style="font-size: 12px; color: #5B6478">Báo cáo  /  Kinh doanh</div>
+        <div style="font-size: 21px; font-weight: 800; letter-spacing: -.025em">Báo cáo doanh thu · Tháng 10/2026</div>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+        <span style="font-size: 12px; font-weight: 600; background: #FEF6E0; color: #7A4A06; padding: 6px 10px; border-radius: 999px">Dữ liệu mẫu minh hoạ</span>
+        <div role="group" aria-label="Kỳ báo cáo" style="display: flex; background: #F2F4F8; border-radius: 10px; padding: 4px; gap: 2px; font-size: 13px; font-weight: 600">
+          <span style="padding: 7px 12px; border-radius: 7px; color: #5B6478">Tuần</span>
+          <span style="padding: 7px 12px; border-radius: 7px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(11,18,32,.15)">Tháng</span>
+          <span style="padding: 7px 12px; border-radius: 7px; color: #5B6478">Quý</span>
+          <span style="padding: 7px 12px; border-radius: 7px; color: #5B6478">Năm</span>
+        </div>
+        <a href="NhapLieuV2.dc.html" class="ghost" style="border: 1px solid #D5DBE6; background: #FFFFFF; color: #0B1220; border-radius: 10px; padding: 0 14px; min-height: 42px; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center">← Về nhập liệu</a>
+      </div>
+    </header>
+
+    <div style="padding: 24px 28px 40px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+      <!-- MAIN COLUMN -->
+      <div style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+        <!-- HERO -->
+        <div class="hero" style="border-radius: 22px; padding: 28px 30px; color: #FFFFFF; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 28px; align-items: center">
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; background: {{statusBg}}; color: {{statusFg}}; padding: 5px 11px; border-radius: 999px">{{statusText}}</span>
+            <span style="font-size: 14px; color: #C5CEE0">Tổng doanh thu tháng 10/2026</span>
+            <span style="font-size: 46px; font-weight: 800; letter-spacing: -.045em; line-height: 1; font-variant-numeric: tabular-nums">486.240.000 ₫</span>
+            <span style="font-size: 14px; color: #6EE7B7; font-weight: 700">▲ 12,4% so với tháng 9 · +53,6 triệu ₫</span>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; color: #C5CEE0"><span>Tiến độ kế hoạch tháng</span><span><b style="color: #FFFFFF">97%</b> / [MỤC TIÊU 500 tr]</span></div>
+              <div style="height: 8px; background: rgba(255,255,255,.14); border-radius: 99px"><div style="width: 97%; height: 100%; background: linear-gradient(90deg, #8EA6FF, #B79CFF); border-radius: 99px"></div></div>
+            </div>
+          </div>
+          <figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+            <figcaption style="font-size: 12px; color: #C5CEE0">Xu hướng doanh thu 6 tháng (triệu ₫)</figcaption>
+            <svg viewBox="0 0 600 170" style="width: 100%; height: auto" role="img" aria-label="Doanh thu tháng 5 đến 10: 380, 402, 395, 418, 432,6 và 486,2 triệu đồng">
+              <line x1="20" y1="150" x2="580" y2="150" stroke="rgba(255,255,255,.15)" stroke-width="1"></line>
+              <line x1="20" y1="100" x2="580" y2="100" stroke="rgba(255,255,255,.08)" stroke-width="1"></line>
+              <line x1="20" y1="50" x2="580" y2="50" stroke="rgba(255,255,255,.08)" stroke-width="1"></line>
+              <path d="M20 131 L132 111 L244 118 L356 96 L468 83 L580 33 L580 150 L20 150 Z" fill="rgba(142,166,255,.18)"></path>
+              <polyline points="20,131 132,111 244,118 356,96 468,83 580,33" fill="none" stroke="#B4C3FF" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></polyline>
+              <circle cx="580" cy="33" r="6" fill="#FFFFFF" stroke="#8EA6FF" stroke-width="3"></circle>
+              <text x="575" y="20" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="end">486,2</text>
+              <text x="20" y="168" fill="#AEB8D0" font-size="12">T5</text><text x="132" y="168" fill="#AEB8D0" font-size="12" text-anchor="middle">T6</text><text x="244" y="168" fill="#AEB8D0" font-size="12" text-anchor="middle">T7</text><text x="356" y="168" fill="#AEB8D0" font-size="12" text-anchor="middle">T8</text><text x="468" y="168" fill="#AEB8D0" font-size="12" text-anchor="middle">T9</text><text x="580" y="168" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="end">T10</text>
+            </svg>
+          </figure>
+        </div>
+
+        <!-- KPI -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 14px">
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #5B6478; font-weight: 500">Số phiếu bán</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end"><span style="font-size: 28px; font-weight: 800; letter-spacing: -.03em">38</span><span style="font-size: 12px; color: #047857; font-weight: 700; background: #E6F6EF; padding: 3px 8px; border-radius: 999px">+6</span></div>
+            <div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 3px; height: 24px"><span style="flex: 1; height: 40%; background: #C7D2FF; border-radius: 2px"></span><span style="flex: 1; height: 55%; background: #C7D2FF; border-radius: 2px"></span><span style="flex: 1; height: 50%; background: #C7D2FF; border-radius: 2px"></span><span style="flex: 1; height: 70%; background: #C7D2FF; border-radius: 2px"></span><span style="flex: 1; height: 65%; background: #C7D2FF; border-radius: 2px"></span><span style="flex: 1; height: 100%; background: #2F54EB; border-radius: 2px"></span></div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #5B6478; font-weight: 500">Giá trị TB / phiếu</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end"><span style="font-size: 28px; font-weight: 800; letter-spacing: -.03em">12,8 tr</span><span style="font-size: 12px; color: #047857; font-weight: 700; background: #E6F6EF; padding: 3px 8px; border-radius: 999px">+4,1%</span></div>
+            <div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 3px; height: 24px"><span style="flex: 1; height: 60%; background: #DCD1FF; border-radius: 2px"></span><span style="flex: 1; height: 55%; background: #DCD1FF; border-radius: 2px"></span><span style="flex: 1; height: 70%; background: #DCD1FF; border-radius: 2px"></span><span style="flex: 1; height: 62%; background: #DCD1FF; border-radius: 2px"></span><span style="flex: 1; height: 80%; background: #DCD1FF; border-radius: 2px"></span><span style="flex: 1; height: 100%; background: #6E46F0; border-radius: 2px"></span></div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #5B6478; font-weight: 500">Chiết khấu trung bình</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end"><span style="font-size: 28px; font-weight: 800; letter-spacing: -.03em">4,6%</span><span style="font-size: 12px; color: #5B6478; font-weight: 700; background: #F2F4F8; padding: 3px 8px; border-radius: 999px">ổn định</span></div>
+            <span style="font-size: 12px; color: #5B6478">Tự tính từ trường “Chiết khấu”</span>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: #5B6478; font-weight: 500">Thuế VAT phải nộp</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end"><span style="font-size: 28px; font-weight: 800; letter-spacing: -.03em">44,2 tr</span><span style="font-size: 12px; color: #92400E; font-weight: 700; background: #FEF6E0; padding: 3px 8px; border-radius: 999px">Kế toán</span></div>
+            <span style="font-size: 12px; color: #5B6478">Tự tính từ trường “Thuế VAT 10%”</span>
+          </div>
+        </div>
+
+        <!-- LEADERBOARD + DONUT -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 20px">
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 16px; font-weight: 800">Xếp hạng nhân viên</span><span style="font-size: 12px; color: #5B6478">triệu ₫ · % tổng</span></div>
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; gap: 12px; align-items: center"><span style="width: 22px; font-size: 13px; font-weight: 800; color: #92400E">1</span><span style="width: 34px; height: 34px; border-radius: 50%; background: #2F54EB; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">TH</span><div style="flex: 1; display: flex; flex-direction: column; gap: 5px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">Trần Thu Hà</span><span style="font-weight: 800; font-variant-numeric: tabular-nums">142,6 <span style="color: #5B6478; font-weight: 500">· 29%</span></span></div><div style="height: 7px; background: #F2F4F8; border-radius: 99px"><div style="width: 100%; height: 100%; background: #2F54EB; border-radius: 99px"></div></div></div></div>
+              <div style="display: flex; gap: 12px; align-items: center"><span style="width: 22px; font-size: 13px; font-weight: 800; color: #5B6478">2</span><span style="width: 34px; height: 34px; border-radius: 50%; background: #6E46F0; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">MN</span><div style="flex: 1; display: flex; flex-direction: column; gap: 5px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">Lê Minh Nam</span><span style="font-weight: 800; font-variant-numeric: tabular-nums">103,1 <span style="color: #5B6478; font-weight: 500">· 21%</span></span></div><div style="height: 7px; background: #F2F4F8; border-radius: 99px"><div style="width: 72%; height: 100%; background: #2F54EB; border-radius: 99px"></div></div></div></div>
+              <div style="display: flex; gap: 12px; align-items: center"><span style="width: 22px; font-size: 13px; font-weight: 800; color: #5B6478">3</span><span style="width: 34px; height: 34px; border-radius: 50%; background: #0E9F6E; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">HP</span><div style="flex: 1; display: flex; flex-direction: column; gap: 5px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">Võ Hoàng Phúc</span><span style="font-weight: 800; font-variant-numeric: tabular-nums">89,4 <span style="color: #5B6478; font-weight: 500">· 18%</span></span></div><div style="height: 7px; background: #F2F4F8; border-radius: 99px"><div style="width: 63%; height: 100%; background: #2F54EB; border-radius: 99px"></div></div></div></div>
+              <div style="display: flex; gap: 12px; align-items: center"><span style="width: 22px; font-size: 13px; font-weight: 800; color: #5B6478">4</span><span style="width: 34px; height: 34px; border-radius: 50%; background: #F59E0B; color: #0B1220; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">KL</span><div style="flex: 1; display: flex; flex-direction: column; gap: 5px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">Phạm Khánh Linh</span><span style="font-weight: 800; font-variant-numeric: tabular-nums">82,7 <span style="color: #5B6478; font-weight: 500">· 17%</span></span></div><div style="height: 7px; background: #F2F4F8; border-radius: 99px"><div style="width: 58%; height: 100%; background: #2F54EB; border-radius: 99px"></div></div></div></div>
+              <div style="display: flex; gap: 12px; align-items: center"><span style="width: 22px; font-size: 13px; font-weight: 800; color: #5B6478">5</span><span style="width: 34px; height: 34px; border-radius: 50%; background: #0B1220; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0">TV</span><div style="flex: 1; display: flex; flex-direction: column; gap: 5px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">Đỗ Tường Vy</span><span style="font-weight: 800; font-variant-numeric: tabular-nums">68,4 <span style="color: #5B6478; font-weight: 500">· 14%</span></span></div><div style="height: 7px; background: #F2F4F8; border-radius: 99px"><div style="width: 48%; height: 100%; background: #2F54EB; border-radius: 99px"></div></div></div></div>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 16px; font-weight: 800">Cơ cấu doanh thu theo sản phẩm</span><span style="font-size: 12px; color: #5B6478">% tổng</span></div>
+            <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap">
+              <div role="img" aria-label="Gói Pro 48%, Gói Basic 27%, Dịch vụ triển khai 17%, Bảo trì 8%" style="width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#2F54EB 0 48%, #6E46F0 48% 75%, #0E9F6E 75% 92%, #F59E0B 92% 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+                <div style="width: 108px; height: 108px; border-radius: 50%; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center"><span style="font-size: 11px; color: #5B6478">Tổng</span><span style="font-size: 18px; font-weight: 800">486,2 tr</span></div>
+              </div>
+              <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 12px; font-size: 14px">
+                <div style="display: flex; justify-content: space-between; gap: 8px"><span style="display: flex; gap: 8px; align-items: center"><span style="width: 10px; height: 10px; border-radius: 3px; background: #2F54EB"></span>Gói phần mềm Pro</span><b>48%</b></div>
+                <div style="display: flex; justify-content: space-between; gap: 8px"><span style="display: flex; gap: 8px; align-items: center"><span style="width: 10px; height: 10px; border-radius: 3px; background: #6E46F0"></span>Gói Basic</span><b>27%</b></div>
+                <div style="display: flex; justify-content: space-between; gap: 8px"><span style="display: flex; gap: 8px; align-items: center"><span style="width: 10px; height: 10px; border-radius: 3px; background: #0E9F6E"></span>Dịch vụ triển khai</span><b>17%</b></div>
+                <div style="display: flex; justify-content: space-between; gap: 8px"><span style="display: flex; gap: 8px; align-items: center"><span style="width: 10px; height: 10px; border-radius: 3px; background: #F59E0B"></span>Bảo trì hằng năm</span><b>8%</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap">
+            <span style="font-size: 16px; font-weight: 800">Chi tiết phiếu bán hàng</span>
+            <span style="font-size: 12px; color: #5B6478">Cột tím = hệ thống tự tính từ công thức</span>
+          </div>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px">
+              <thead><tr style="text-align: left; color: #3B4559">
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600">Mã phiếu</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600">Khách hàng</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600">Nhân viên</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600; text-align: right">SL</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600; text-align: right; color: #5B33E0; background: #FAF8FF">Thành tiền</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600; text-align: right; color: #5B33E0; background: #FAF8FF">VAT</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600; text-align: right; color: #5B33E0; background: #FAF8FF">Tổng</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #E7EAF0; font-weight: 600">Trạng thái</th>
+              </tr></thead>
+              <tbody style="font-variant-numeric: tabular-nums">
+                <tr><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; font-family: 'JetBrains Mono', monospace; font-size: 12px">PBH-1038</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Công ty TNHH Minh Phát</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Trần Thu Hà</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">12</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">15.000.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">1.425.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right; font-weight: 800">15.675.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8"><span style="background: #E6F6EF; color: #047857; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700">Đã duyệt</span></td></tr>
+                <tr><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; font-family: 'JetBrains Mono', monospace; font-size: 12px">PBH-1037</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">CP Thương mại An Khang</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Lê Minh Nam</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">24</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">28.800.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">2.592.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right; font-weight: 800">28.512.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8"><span style="background: #E6F6EF; color: #047857; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700">Đã duyệt</span></td></tr>
+                <tr><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; font-family: 'JetBrains Mono', monospace; font-size: 12px">PBH-1036</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Cửa hàng Bảo Ngọc</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Đỗ Tường Vy</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">10</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">9.000.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">855.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right; font-weight: 800">9.405.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8"><span style="background: #FEF6E0; color: #92400E; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700">Chờ duyệt</span></td></tr>
+                <tr><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; font-family: 'JetBrains Mono', monospace; font-size: 12px">PBH-1035</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Công ty CP Hải Đăng</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8">Võ Hoàng Phúc</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">8</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">20.000.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right">2.000.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8; text-align: right; font-weight: 800">22.000.000</td><td style="padding: 12px 8px; border-bottom: 1px solid #F2F4F8"><span style="background: #FEF6E0; color: #92400E; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700">Chờ duyệt</span></td></tr>
+                <tr><td style="padding: 12px 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px">PBH-1034</td><td style="padding: 12px 8px">TNHH Sao Việt</td><td style="padding: 12px 8px">Phạm Khánh Linh</td><td style="padding: 12px 8px; text-align: right">15</td><td style="padding: 12px 8px; text-align: right">18.750.000</td><td style="padding: 12px 8px; text-align: right">1.781.250</td><td style="padding: 12px 8px; text-align: right; font-weight: 800">19.593.750</td><td style="padding: 12px 8px"><span style="background: #E6F6EF; color: #047857; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700">Đã duyệt</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE COLUMN -->
+      <aside style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+        <!-- APPROVAL FLOW -->
+        <section aria-label="Luồng phê duyệt" style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 16px; font-weight: 800">Luồng phê duyệt</span><span style="font-size: 12px; font-weight: 700; color: #5B6478">{{stepText}}</span></div>
+          <div style="display: flex; flex-direction: column">
+            <div style="display: flex; gap: 12px"><div style="display: flex; flex-direction: column; align-items: center"><span style="width: 30px; height: 30px; border-radius: 50%; background: #0E9F6E; color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span><span style="width: 2px; flex: 1; background: #0E9F6E"></span></div><div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 16px"><span style="font-size: 14px; font-weight: 700">Trần Thu Hà gửi báo cáo</span><span style="font-size: 12px; color: #5B6478">Nhân viên Kinh doanh · 08:50</span></div></div>
+            <div style="display: flex; gap: 12px"><div style="display: flex; flex-direction: column; align-items: center"><span style="width: 30px; height: 30px; border-radius: 50%; background: #0E9F6E; color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span><span style="width: 2px; flex: 1; background: #0E9F6E"></span></div><div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 16px"><span style="font-size: 14px; font-weight: 700">Lê Minh Nam duyệt</span><span style="font-size: 12px; color: #5B6478">Trưởng phòng Kinh doanh · 09:30</span></div></div>
+            <div style="display: flex; gap: 12px"><div style="display: flex; flex-direction: column; align-items: center"><span style="width: 30px; height: 30px; border-radius: 50%; background: #0E9F6E; color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">✓</span><span style="width: 2px; flex: 1; background: {{lineFinal}}"></span></div><div style="display: flex; flex-direction: column; gap: 2px; padding-bottom: 16px"><span style="font-size: 14px; font-weight: 700">Lê Thị Mai đối chiếu số liệu</span><span style="font-size: 12px; color: #5B6478">Kế toán trưởng · 10:15 · “Khớp sổ sách”</span></div></div>
+            <div style="display: flex; gap: 12px"><div style="display: flex; flex-direction: column; align-items: center"><span style="width: 30px; height: 30px; border-radius: 50%; background: {{finalBg}}; color: {{finalFg}}; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{finalIcon}}</span></div>
+              <div style="display: flex; flex-direction: column; gap: 10px; flex: 1">
+                <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">Ban Giám đốc phê duyệt</span><span style="font-size: 12px; color: #5B6478">{{finalSub}}</span></div>
+                <sc-if value="{{isPending}}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-direction: column; gap: 8px">
+                    <label for="bc-note" style="font-size: 12px; font-weight: 600; color: #3B4559">Ghi chú (tuỳ chọn)</label>
+                    <textarea id="bc-note" rows="2" placeholder="Ví dụ: Đẩy mạnh gói Basic quý tới" style="border: 1px solid #D5DBE6; border-radius: 10px; padding: 10px 12px; font-size: 13px; resize: none; color: #0B1220"></textarea>
+                    <div style="display: flex; gap: 8px">
+                      <button onClick="{{approve}}" style="flex: 1; border: 0; background: #0B1220; color: #FFFFFF; border-radius: 10px; min-height: 44px; font-size: 14px; font-weight: 700; cursor: pointer">Phê duyệt</button>
+                      <button class="ghost" onClick="{{reject}}" style="flex: 1; border: 1px solid #D5DBE6; background: #FFFFFF; color: #0B1220; border-radius: 10px; min-height: 44px; font-size: 14px; font-weight: 600; cursor: pointer">Trả lại</button>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{isDecided}}" hint-placeholder-val="{{ false }}">
+                  <button class="ghost" onClick="{{reset}}" style="align-self: flex-start; border: 1px solid #D5DBE6; background: #FFFFFF; color: #3B4559; border-radius: 8px; padding: 0 12px; min-height: 34px; font-size: 12px; font-weight: 600; cursor: pointer">↺ Diễn lại bước duyệt</button>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXPORT -->
+        <section aria-label="Xuất báo cáo" style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 16px; font-weight: 800">Xuất báo cáo</span><span style="font-size: 12px; font-weight: 700; background: {{lockBg}}; color: {{lockFg}}; padding: 4px 10px; border-radius: 999px">{{lockText}}</span></div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <button class="exp" onClick="{{pickX}}" style="border: 2px solid {{xBorder}}; background: #FFFFFF; border-radius: 12px; padding: 12px 6px; min-height: 80px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="background: #166534; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 8px; border-radius: 6px">XLSX</span><span style="font-size: 13px; font-weight: 600; color: #0B1220">Excel</span></button>
+            <button class="exp" onClick="{{pickW}}" style="border: 2px solid {{wBorder}}; background: #FFFFFF; border-radius: 12px; padding: 12px 6px; min-height: 80px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="background: #1E40AF; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 8px; border-radius: 6px">DOCX</span><span style="font-size: 13px; font-weight: 600; color: #0B1220">Word</span></button>
+            <button class="exp" onClick="{{pickP}}" style="border: 2px solid {{pBorder}}; background: #FFFFFF; border-radius: 12px; padding: 12px 6px; min-height: 80px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="background: #C2410C; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 8px; border-radius: 6px">PPTX</span><span style="font-size: 13px; font-weight: 600; color: #0B1220">PowerPoint</span></button>
+          </div>
+          <div style="background: #F2F4F8; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+            <sc-if value="{{isX}}" hint-placeholder-val="{{ true }}">
+              <div style="background: #FFFFFF; border-radius: 8px; overflow: hidden; font-size: 10px; font-family: 'JetBrains Mono', monospace; box-shadow: 0 4px 12px -4px rgba(11,18,32,.2)">
+                <div style="background: #166534; color: #fff; padding: 6px 8px; font-weight: 700">BaoCao_DoanhThu_T10.xlsx</div>
+                <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr">
+                  <span style="padding: 5px 6px; background: #F2F4F8; border-right: 1px solid #DCE0EA; border-bottom: 1px solid #DCE0EA; font-weight: 700">Nhân viên</span><span style="padding: 5px 6px; background: #F2F4F8; border-right: 1px solid #DCE0EA; border-bottom: 1px solid #DCE0EA; font-weight: 700">Thành tiền</span><span style="padding: 5px 6px; background: #F2F4F8; border-right: 1px solid #DCE0EA; border-bottom: 1px solid #DCE0EA; font-weight: 700">VAT</span><span style="padding: 5px 6px; background: #F2F4F8; border-bottom: 1px solid #DCE0EA; font-weight: 700">Tổng</span>
+                  <span style="padding: 5px 6px; border-right: 1px solid #E7EAF0; border-bottom: 1px solid #E7EAF0">Thu Hà</span><span style="padding: 5px 6px; border-right: 1px solid #E7EAF0; border-bottom: 1px solid #E7EAF0">15.000.000</span><span style="padding: 5px 6px; border-right: 1px solid #E7EAF0; border-bottom: 1px solid #E7EAF0">1.425.000</span><span style="padding: 5px 6px; border-bottom: 1px solid #E7EAF0">=B2-C2+D2</span>
+                  <span style="padding: 5px 6px; border-right: 1px solid #E7EAF0">Minh Nam</span><span style="padding: 5px 6px; border-right: 1px solid #E7EAF0">28.800.000</span><span style="padding: 5px 6px; border-right: 1px solid #E7EAF0">2.592.000</span><span style="padding: 5px 6px">=B3-C3+D3</span>
+                </div>
+              </div>
+              <span style="font-size: 12px; color: #3B4559">Số liệu chi tiết, giữ nguyên công thức để kế toán đối chiếu.</span>
+            </sc-if>
+            <sc-if value="{{isW}}" hint-placeholder-val="{{ false }}">
+              <div style="background: #FFFFFF; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 12px -4px rgba(11,18,32,.2)">
+                <span style="font-size: 9px; color: #1E40AF; font-weight: 700">BaoCao_DoanhThu_T10.docx</span>
+                <span style="font-size: 12px; font-weight: 800">BÁO CÁO DOANH THU THÁNG 10/2026</span>
+                <span style="font-size: 10px; color: #3B4559; line-height: 1.5">Tổng doanh thu đạt 486.240.000 ₫, tăng 12,4% so với tháng trước; đạt 97% kế hoạch.</span>
+                <span style="height: 5px; background: #E7EAF0; border-radius: 3px; width: 100%"></span><span style="height: 5px; background: #E7EAF0; border-radius: 3px; width: 82%"></span>
+              </div>
+              <span style="font-size: 12px; color: #3B4559">Văn bản có bảng biểu, nhận xét và chữ ký duyệt.</span>
+            </sc-if>
+            <sc-if value="{{isP}}" hint-placeholder-val="{{ false }}">
+              <div class="hero" style="border-radius: 8px; aspect-ratio: 16 / 9; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between">
+                <span style="font-size: 9px; color: #B4C3FF; font-weight: 700">BaoCao_DoanhThu_T10.pptx · Slide 1/6</span>
+                <span style="font-size: 16px; font-weight: 800; color: #FFFFFF; line-height: 1.25">Doanh thu tháng 10<br>486,2 triệu ₫ · ▲12,4%</span>
+                <svg viewBox="0 0 200 40" style="width: 60%; height: auto" aria-hidden="true"><polyline points="0,34 40,28 80,30 120,24 160,20 200,6" fill="none" stroke="#B4C3FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+              </div>
+              <span style="font-size: 12px; color: #3B4559">Bộ slide tóm tắt cho cuộc họp giao ban.</span>
+            </sc-if>
+          </div>
+          <button onClick="{{download}}" style="border: 0; background: {{dlBg}}; color: #FFFFFF; border-radius: 12px; min-height: 48px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M4 19h16"></path></svg>
+            {{downloadLabel}}
+          </button>
+          <sc-if value="{{showMsg}}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="background: {{msgBg}}; color: {{msgFg}}; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 600">{{msgText}}</div>
+          </sc-if>
+        </section>
+
+        <!-- ACTIVITY -->
+        <section aria-label="Nhật ký hoạt động" style="background: #FFFFFF; border: 1px solid #E7EAF0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+          <span style="font-size: 16px; font-weight: 800">Nhật ký hoạt động</span>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px">
+            <sc-if value="{{isDecided}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{finalBg}}; margin-top: 6px; flex-shrink: 0"></span><span><b>Ban Giám đốc</b> {{activityVerb}} báo cáo doanh thu T10 <span style="color: #5B6478">· vừa xong</span></span></div>
+            </sc-if>
+            <div style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0E9F6E; margin-top: 6px; flex-shrink: 0"></span><span><b>Lê Thị Mai</b> đối chiếu và xác nhận số liệu <span style="color: #5B6478">· 10:15</span></span></div>
+            <div style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #6E46F0; margin-top: 6px; flex-shrink: 0"></span><span><b>Hệ thống</b> tự tính lại 38 phiếu sau khi cập nhật công thức VAT <span style="color: #5B6478">· 09:42</span></span></div>
+            <div style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2F54EB; margin-top: 6px; flex-shrink: 0"></span><span><b>Lê Minh Nam</b> duyệt cấp phòng <span style="color: #5B6478">· 09:30</span></span></div>
+            <div style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #A9B3C6; margin-top: 6px; flex-shrink: 0"></span><span><b>Trần Thu Hà</b> gửi báo cáo doanh thu T10 <span style="color: #5B6478">· 08:50</span></span></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const ap = s.ap || 'pending';
+    const fmt = s.fmt || 'x';
+    const ok = ap === 'ok';
+    const back = ap === 'back';
+    const names = { x: 'Excel', w: 'Word', p: 'PowerPoint' };
+    const files = { x: 'BaoCao_DoanhThu_T10.xlsx', w: 'BaoCao_DoanhThu_T10.docx', p: 'BaoCao_DoanhThu_T10.pptx' };
+    const on = '#2F54EB';
+    const off = '#E7EAF0';
+    let msg = null;
+    if (s.dl === 'locked') msg = { t: 'Báo cáo cần được Ban Giám đốc phê duyệt trước khi xuất file.', bg: '#FEF6E0', fg: '#7A4A06' };
+    if (s.dl === 'done') msg = { t: '✓ Đã tạo ' + files[fmt] + ' — sẵn sàng gửi đi và trình chiếu.', bg: '#E6F6EF', fg: '#065F46' };
+    return {
+      pendingCount: ok || back ? '2' : '3',
+      statusText: ok ? '✓ Đã được Ban Giám đốc phê duyệt' : (back ? '↩ Đã trả lại để chỉnh sửa' : '● Chờ Ban Giám đốc phê duyệt'),
+      statusBg: ok ? 'rgba(110,231,183,.18)' : (back ? 'rgba(252,165,165,.2)' : 'rgba(251,191,36,.2)'),
+      statusFg: ok ? '#6EE7B7' : (back ? '#FCA5A5' : '#FCD34D'),
+      stepText: ok ? '4/4 hoàn tất' : (back ? 'Đã trả lại' : 'Bước 4/4'),
+      lineFinal: ok ? '#0E9F6E' : '#E7EAF0',
+      finalBg: ok ? '#0E9F6E' : (back ? '#B42318' : '#F59E0B'),
+      finalFg: ok || back ? '#FFFFFF' : '#0B1220',
+      finalIcon: ok ? '✓' : (back ? '↩' : '4'),
+      finalSub: ok ? 'Nguyễn Quang Vinh · vừa duyệt' : (back ? 'Nguyễn Quang Vinh · đã trả lại kèm ghi chú' : 'Đang chờ bạn xử lý'),
+      isPending: ap === 'pending',
+      isDecided: ap !== 'pending',
+      activityVerb: ok ? 'đã phê duyệt' : 'đã trả lại',
+      approve: () => this.setState({ ap: 'ok', dl: null }),
+      reject: () => this.setState({ ap: 'back', dl: null }),
+      reset: () => this.setState({ ap: 'pending', dl: null }),
+      lockText: ok ? 'Đã mở khoá' : 'Chờ phê duyệt',
+      lockBg: ok ? '#E6F6EF' : '#F2F4F8',
+      lockFg: ok ? '#047857' : '#5B6478',
+      isX: fmt === 'x', isW: fmt === 'w', isP: fmt === 'p',
+      xBorder: fmt === 'x' ? on : off, wBorder: fmt === 'w' ? on : off, pBorder: fmt === 'p' ? on : off,
+      pickX: () => this.setState({ fmt: 'x', dl: null }),
+      pickW: () => this.setState({ fmt: 'w', dl: null }),
+      pickP: () => this.setState({ fmt: 'p', dl: null }),
+      dlBg: ok ? '#2F54EB' : '#8A93A8',
+      downloadLabel: 'Xuất file ' + names[fmt],
+      download: () => this.setState({ dl: ok ? 'done' : 'locked' }),
+      showMsg: !!msg,
+      msgText: msg ? msg.t : '', msgBg: msg ? msg.bg : '#FFFFFF', msgFg: msg ? msg.fg : '#0B1220'
+    };
+  }
+}
+</script>
+</body>
+</html>

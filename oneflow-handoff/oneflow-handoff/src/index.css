@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter Display', 'Inter', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-ink: #0b1220;
+  --color-body: #3b4559;
+  --color-muted: #5b6478;
+  --color-faint: #8a93a8;
+  --color-line: #e7eaf0;
+  --color-line-2: #eef0f4;
+  --color-line-3: #d5dbe6;
+  --color-dash: #a9b3c6;
+  --color-soft: #f6f8fb;
+  --color-hover: #f2f4f8;
+
+  --color-primary: #2f54eb;
+  --color-primary-hover: #1e3cc2;
+  --color-primary-soft: #eef2ff;
+  --color-primary-line: #c7d2ff;
+
+  --color-violet: #6e46f0;
+  --color-violet-text: #5b33e0;
+  --color-violet-soft: #f3efff;
+  --color-violet-card: #faf8ff;
+  --color-violet-line: #dcd1ff;
+  --color-violet-card-line: #e6ddff;
+
+  --color-green: #0e9f6e;
+  --color-green-text: #047857;
+  --color-green-soft: #e6f6ef;
+  --color-green-line: #bde8d6;
+  --color-green-deep: #065f46;
+
+  --color-amber: #f59e0b;
+  --color-amber-text: #92400e;
+  --color-amber-deep: #7a4a06;
+  --color-amber-soft: #fef6e0;
+
+  --color-red-text: #b42318;
+  --color-red-soft: #fef1ee;
+
+  --color-xlsx: #166534;
+  --color-docx: #1e40af;
+  --color-pptx: #c2410c;
+
+  --shadow-card: 0 24px 48px -28px rgba(11, 18, 32, 0.35);
+  --shadow-seg: 0 1px 3px rgba(11, 18, 32, 0.15);
+}
+
+html,
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+@layer base {
+  a {
+    color: var(--color-primary);
+  }
+}
+
+@layer components {
+  .hero-bg {
+    background-color: #fff;
+    background-image:
+      radial-gradient(620px 380px at 88% 18%, rgba(47, 84, 235, 0.14), transparent 70%),
+      radial-gradient(520px 340px at 70% 90%, rgba(110, 70, 240, 0.1), transparent 70%),
+      radial-gradient(#e3e7ef 1px, transparent 1px);
+    background-size: auto, auto, 22px 22px;
+  }
+  .navy {
+    background-color: #0b1220;
+    background-image:
+      radial-gradient(520px 300px at 12% 0%, rgba(47, 84, 235, 0.45), transparent 70%),
+      radial-gradient(520px 300px at 95% 100%, rgba(110, 70, 240, 0.38), transparent 70%);
+  }
+  .report-hero {
+    background-color: #0b1220;
+    background-image:
+      radial-gradient(520px 300px at 0% 0%, rgba(47, 84, 235, 0.55), transparent 70%),
+      radial-gradient(480px 300px at 100% 100%, rgba(110, 70, 240, 0.45), transparent 70%);
+  }
+  .showcase-bg {
+    background-color: #f6f8fb;
+    background-image:
+      radial-gradient(640px 420px at 30% 70%, rgba(47, 84, 235, 0.16), transparent 70%),
+      radial-gradient(520px 380px at 88% 40%, rgba(110, 70, 240, 0.14), transparent 70%),
+      radial-gradient(#dce1ea 1px, transparent 1px);
+    background-size: auto, auto, 22px 22px;
+  }
+  .grid-bg {
+    background-image: radial-gradient(#dce1ea 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .card-hover {
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card) !important;
+    border-color: #d5dbe6 !important;
+  }
+  .pal {
+    cursor: grab;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  }
+  .pal:hover {
+    border-color: #a9b3c6 !important;
+    box-shadow: 0 8px 18px -10px rgba(11, 18, 32, 0.3);
+    transform: translateY(-1px);
+  }
+  .pal:active {
+    cursor: grabbing;
+  }
+  .ghost:hover {
+    background: #f2f4f8 !important;
+  }
+  .chipbtn:hover {
+    filter: brightness(0.96);
+  }
+  .exp {
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .exp:hover {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 1365px) {
+  .field-cell[data-span='2'],
+  .field-cell[data-span='3'] {
+    grid-column: span 4 / span 4 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .field-cell {
+    grid-column: span 12 / span 12 !important;
+  }
+}
+
+/* Nút ↔ × trên thẻ: chỉ hiện khi rê chuột / đang chọn để tên trường không bị cắt. */
+@media (hover: hover) {
+  .card-actions {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: -12px 0 8px -2px var(--card-bg);
+  }
+  .group:hover .card-actions,
+  .group:focus-within .card-actions,
+  .card-actions.is-on {
+    opacity: 1;
+  }
+}

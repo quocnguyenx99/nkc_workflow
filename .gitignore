@@ -1,0 +1,17 @@
+# Dependencies & build output
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
+
+# Ảnh chụp kiểm tra / file tạm của Playwright
+screenshots/
+.playwright-mcp/
+
+# Skill bên thứ ba (chứa thư viện logo có thương hiệu — không phân phối lại)
+.claude/skills/logo-design/
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db

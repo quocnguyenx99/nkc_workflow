@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t">
+  <title id="t">OneFlow — A Hợp lưu</title>
+  <rect width="256" height="256" fill="none"/>
+  <g fill="#111" transform="translate(128 128) scale(1.15) translate(-128 -128)">
+    <path fill="none" stroke="#111" stroke-width="40" stroke-linecap="butt" stroke-linejoin="round"
+          d="M24 80 H88 C136 80 128 128 176 128 H212 M24 176 H88 C136 176 128 128 176 128"/>
+    <circle cx="212" cy="128" r="20"/>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 256" width="880" height="256" role="img" aria-labelledby="t">
+  <title id="t">OneFlow lockup c (khám phá — chữ chưa outline)</title>
+  <rect width="256" height="256" fill="none"/>
+  <g>
+  <g transform="translate(128 128) scale(1.12) translate(-114 -128)" fill="#111">
+    <path fill="none" stroke="#111" stroke-width="48" stroke-linecap="round" d="M84 108 A64 64 0 0 1 148 44 V212"/>
+  </g>
+  </g>
+  <text x="284" y="170" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="124" font-weight="800" letter-spacing="-5" fill="#111">OneFlow</text>
+</svg>
