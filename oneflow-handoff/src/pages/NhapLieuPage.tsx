@@ -126,7 +126,7 @@ export default function NhapLieuPage() {
       }
     >
       <AppHeader crumb="Kinh doanh  /  Biểu mẫu" title="Phiếu bán hàng">
-        {/* <button type="button" onClick={replayGuide} className="border-0 bg-transparent rounded-[9px] px-2.5 min-h-10 text-[13px] font-semibold text-muted cursor-pointer hover:bg-hover">? Hướng dẫn</button> */}
+        <button type="button" onClick={replayGuide} className="border-0 hidden bg-transparent rounded-[9px] px-2.5 min-h-10 text-[13px] font-semibold text-muted cursor-pointer hover:bg-hover">? Hướng dẫn</button>
         <div role="tablist" aria-label="Không gian làm việc" className="flex bg-hover rounded-xl p-1 gap-1">
           <button type="button" role="tab" aria-selected={!testing} onClick={() => switchMode('design')} className="border-0 rounded-[9px] px-4 min-h-[38px] text-[14px] font-semibold cursor-pointer transition-colors" style={segmentStyle(!testing)}>
             Thiết kế biểu mẫu
