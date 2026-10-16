@@ -4,22 +4,58 @@ import { motion } from 'motion/react';
 
 
 /** Hộp kích thước cố định w×h, thu phóng theo bề rộng khả dụng (không phóng to quá 1). */
-function ScaledBox({ w, h, className = '', children }: { w: number; h: number; className?: string; children: ReactNode }) {
+
+/** Hộp kích thước cố định, tự scale và căn giữa phía trên. */
+function ScaledBox({
+  w,
+  h,
+  className = '',
+  children,
+}: {
+  w: number;
+  h: number;
+  className?: string;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setScale(Math.min(1, el.clientWidth / w)));
+
+    const updateScale = () => {
+      setScale(Math.min(1, el.clientWidth / w));
+    };
+
+    const ro = new ResizeObserver(updateScale);
     ro.observe(el);
+    updateScale();
+
     return () => ro.disconnect();
   }, [w]);
+
   return (
-    <div ref={ref} className={'w-full overflow-hidden ' + className} style={{ height: h * scale }}>
-      <div className="relative" style={{ width: w, height: h, transform: `scale(${scale})`, transformOrigin: 'top left' }}>{children}</div>
+    <div
+      ref={ref}
+      className={`flex w-full justify-center items-start overflow-hidden ${className}`}
+      style={{ height: h * scale }}
+    >
+      <div
+        className="relative shrink-0"
+        style={{
+          width: w,
+          height: h,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center top',
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
+
 
 function useNarrow(query = '(max-width: 899px)') {
   const [m, setM] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
@@ -42,24 +78,24 @@ const rise = (delay: number) => ({
 function Header({ mobile = false }: { mobile?: boolean }) {
   return (
     <motion.div {...rise(0)} className={mobile ? 'flex flex-col gap-5' : 'flex justify-between items-end gap-8'}>
-    <div className="flex flex-col gap-3.5">
-      <span className="self-start text-[12px] font-bold tracking-[.14em] text-primary bg-primary-soft px-3 py-1.5 rounded-full">TRẢI NGHIỆM ĐA NỀN TẢNG</span>
-      <h2 className={'m-0 leading-[1.05] font-extrabold tracking-[-.045em] ' + (mobile ? 'text-[34px]' : 'text-[50px]')}>
-        Một hệ thống.
-        <br />
-        Vận hành trên mọi màn hình.
-      </h2>
-    </div>
-    <div className="flex flex-col gap-3.5 max-w-[420px]">
-      <p className={'m-0 text-body leading-[1.6] ' + (mobile ? 'text-[16px]' : 'text-[17px]')}>
-        Ban Giám đốc theo dõi trên máy tính, nhân viên nhập phiếu và quản lý phê duyệt ngay trên điện thoại — dữ liệu đồng bộ tức thì.
-      </p>
-      <div className="flex gap-2 text-[13px] font-bold">
-        <span className="bg-ink text-white px-3.5 py-[7px] rounded-full">Desktop</span>
-        <span className="bg-white border border-line px-3.5 py-[7px] rounded-full">Tablet</span>
-        <span className="bg-white border border-line px-3.5 py-[7px] rounded-full">Mobile</span>
+      <div className="flex flex-col gap-3.5">
+        <span className="self-start text-[12px] font-bold tracking-[.14em] text-primary bg-primary-soft px-3 py-1.5 rounded-full">TRẢI NGHIỆM ĐA NỀN TẢNG</span>
+        <h2 className={'m-0 leading-[1.05] font-extrabold tracking-[-.045em] ' + (mobile ? 'text-[34px]' : 'text-[50px]')}>
+          Một hệ thống.
+          <br />
+          Vận hành trên mọi màn hình.
+        </h2>
       </div>
-    </div>
+      <div className="flex flex-col gap-3.5 max-w-[420px]">
+        <p className={'m-0 text-body leading-[1.6] ' + (mobile ? 'text-[16px]' : 'text-[17px]')}>
+          Ban Giám đốc theo dõi trên máy tính, nhân viên nhập phiếu và quản lý phê duyệt ngay trên điện thoại — dữ liệu đồng bộ tức thì.
+        </p>
+        <div className="flex gap-2 text-[13px] font-bold">
+          <span className="bg-ink text-white px-3.5 py-[7px] rounded-full">Desktop</span>
+          <span className="bg-white border border-line px-3.5 py-[7px] rounded-full">Tablet</span>
+          <span className="bg-white border border-line px-3.5 py-[7px] rounded-full">Mobile</span>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -301,56 +337,56 @@ function SyncToast({ pos = '' }: { pos?: string }) {
 function Features({ mobile = false }: { mobile?: boolean }) {
   return (
     <motion.div {...rise(0.5)} className={(mobile ? 'grid grid-cols-1 gap-5' : 'grid grid-cols-3 gap-8') + ' border-t border-line pt-[22px]'}>
-    {[
-      {
-        t: 'Dashboard cho lãnh đạo',
-        s: 'Toàn cảnh mọi phòng ban trên một màn hình',
-        bg: '#EEF2FF',
-        fg: '#2F54EB',
-        icon: (
-          <>
-            <rect x="2" y="4" width="20" height="13" rx="2" />
-            <line x1="8" y1="21" x2="16" y2="21" />
-          </>
-        ),
-      },
-      {
-        t: 'Nhập liệu trên di động',
-        s: 'Kết quả tự tính ngay khi gõ số',
-        bg: '#F3EFFF',
-        fg: '#5B33E0',
-        icon: (
-          <>
-            <rect x="6" y="2" width="12" height="20" rx="2.5" />
-            <line x1="11" y1="18" x2="13" y2="18" />
-          </>
-        ),
-      },
-      {
-        t: 'Phê duyệt một chạm',
-        s: 'Thông báo tức thì, duyệt ở mọi nơi',
-        bg: '#E6F6EF',
-        fg: '#047857',
-        icon: (
-          <>
-            <path d="M9 11l3 3 8-8" />
-            <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" />
-          </>
-        ),
-      },
-    ].map((f) => (
-      <div key={f.t} className="flex gap-3.5 items-start">
-        <span className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: f.bg, color: f.fg }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            {f.icon}
-          </svg>
-        </span>
-        <span className="flex flex-col gap-[3px]">
-          <span className="text-[16px] font-bold">{f.t}</span>
-          <span className="text-[14px] text-muted">{f.s}</span>
-        </span>
-      </div>
-    ))}
+      {[
+        {
+          t: 'Dashboard cho lãnh đạo',
+          s: 'Toàn cảnh mọi phòng ban trên một màn hình',
+          bg: '#EEF2FF',
+          fg: '#2F54EB',
+          icon: (
+            <>
+              <rect x="2" y="4" width="20" height="13" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+            </>
+          ),
+        },
+        {
+          t: 'Nhập liệu trên di động',
+          s: 'Kết quả tự tính ngay khi gõ số',
+          bg: '#F3EFFF',
+          fg: '#5B33E0',
+          icon: (
+            <>
+              <rect x="6" y="2" width="12" height="20" rx="2.5" />
+              <line x1="11" y1="18" x2="13" y2="18" />
+            </>
+          ),
+        },
+        {
+          t: 'Phê duyệt một chạm',
+          s: 'Thông báo tức thì, duyệt ở mọi nơi',
+          bg: '#E6F6EF',
+          fg: '#047857',
+          icon: (
+            <>
+              <path d="M9 11l3 3 8-8" />
+              <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" />
+            </>
+          ),
+        },
+      ].map((f) => (
+        <div key={f.t} className="flex gap-3.5 items-start">
+          <span className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: f.bg, color: f.fg }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {f.icon}
+            </svg>
+          </span>
+          <span className="flex flex-col gap-[3px]">
+            <span className="text-[16px] font-bold">{f.t}</span>
+            <span className="text-[14px] text-muted">{f.s}</span>
+          </span>
+        </div>
+      ))}
     </motion.div>
   );
 }
@@ -373,7 +409,7 @@ export default function GiaoDienPage() {
           <Features mobile />
         </div>
       ) : (
-        <ScaledBox w={1440} h={1120} className="showcase-bg">
+        <ScaledBox w={1440} h={1120} className="showcase-bg mx-auto">
           <div className="showcase-bg w-[1440px] h-[1120px] box-border px-[88px] py-14 flex flex-col gap-9 overflow-hidden">
             <Header />
             <div className="relative flex-1">
