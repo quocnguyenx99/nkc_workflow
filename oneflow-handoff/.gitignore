@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
+screenshots/
+.playwright-mcp/
+.playwright-cli/
+test-results/
+playwright-report/
+.claude/skills/logo-design/
+.claude/settings.local.json
