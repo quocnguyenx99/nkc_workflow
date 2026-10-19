@@ -53,14 +53,8 @@ test('P1: palette drag/drop, field settings and editable formula tokens', async 
   const openLibrary = page.getByRole('button', { name: '+ Thêm trường' });
   if (await openLibrary.isVisible()) await openLibrary.click();
   const handle = page.getByRole('button', { name: 'Kéo Văn bản vào biểu mẫu' });
-  const canvas = page.getByRole('region', { name: 'Biểu mẫu thiết kế' });
-  const from = await handle.boundingBox();
-  const to = await canvas.boundingBox();
-  expect(from && to).toBeTruthy();
-  await page.mouse.move(from!.x + from!.width / 2, from!.y + from!.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(to!.x + to!.width / 2, to!.y + to!.height - 40, { steps: 14 });
-  await page.mouse.up();
+  const canvas = page.locator('.builder-end-drop');
+  await handle.dragTo(canvas);
   await expect(page.locator('.field-cell')).toHaveCount(cardsBefore + 1);
   await expect(page.getByLabel('Cấu hình trường')).toContainText('VĂN BẢN');
   await page.getByLabel('Bắt buộc nhập').check();
@@ -82,7 +76,7 @@ test('P1: palette drag/drop, field settings and editable formula tokens', async 
   await expect(page.getByRole('button', { name: '2.5' })).toBeVisible();
   await page.getByLabel('Loại kết quả').selectOption('number');
   await page.getByLabel('Số lẻ').fill('2');
-  await expect(page.getByLabel('Cấu hình trường')).toContainText(',50');
+  await expect(page.getByRole('complementary', { name: 'Setup công thức' })).toContainText(',50');
 });
 
 test('workspace uses independent scrolling and adaptive drawers', async ({ page }) => {

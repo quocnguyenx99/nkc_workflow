@@ -5,6 +5,7 @@ import { useFormStore } from './form';
 function resetStore() {
   useFormStore.setState({
     fields: salesTemplate(),
+    formOrder: salesTemplate().map((field) => field.id),
     mode: 'design',
     sel: 'f4',
     seq: 1,
@@ -84,6 +85,36 @@ describe('form store safety guards', () => {
     useFormStore.getState().undoLast();
 
     expect(useFormStore.getState().fields[4].id).toBe('c5');
+    expect(useFormStore.getState().formOrder[4]).toBe('c5');
     expect(useFormStore.getState().sel).toBe('f4');
+  });
+
+  it('creates formula definitions independently from placement and prevents duplicate placement', () => {
+    const id = useFormStore.getState().createFormula('mul');
+    expect(useFormStore.getState().fields.some((field) => field.id === id)).toBe(true);
+    expect(useFormStore.getState().formOrder).not.toContain(id);
+
+    useFormStore.getState().placeField(id, 2);
+    useFormStore.getState().placeField(id, 4);
+    expect(useFormStore.getState().formOrder.filter((fieldId) => fieldId === id)).toHaveLength(1);
+    expect(useFormStore.getState().formOrder[2]).toBe(id);
+
+    useFormStore.getState().detachFormula(id);
+    expect(useFormStore.getState().formOrder).not.toContain(id);
+    expect(useFormStore.getState().fields.some((field) => field.id === id)).toBe(true);
+  });
+
+  it('does not let an unused unplaced formula draft block sales submission', () => {
+    const id = useFormStore.getState().createFormula('free');
+    expect(useFormStore.getState().fields.find((field) => field.id === id)?.tokens).toEqual([]);
+    expect(useFormStore.getState().save().ok).toBe(true);
+  });
+
+  it('validates an unplaced helper formula when a placed formula depends on it', () => {
+    const helperId = useFormStore.getState().createFormula('free');
+    useFormStore.getState().updateField('f4', { tokens: [{ f: helperId }] });
+    const result = useFormStore.getState().save();
+    expect(result.ok).toBe(false);
+    expect(!result.ok && result.reason === 'validation' && result.issues.some((issue) => issue.code === 'formula_empty')).toBe(true);
   });
 });

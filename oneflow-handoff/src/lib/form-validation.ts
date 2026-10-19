@@ -83,18 +83,40 @@ export function validateInputField(field: Field): FormValidationIssue[] {
   return issues;
 }
 
-export function validateFormForSave(fields: Field[]): FormValidationIssue[] {
-  if (!fields.length) return [{ code: 'empty_form', message: 'Biểu mẫu chưa có trường dữ liệu.' }];
+function reachableFormulaIds(fields: Field[], roots: Iterable<string>): Set<string> {
+  const reachable = new Set<string>();
+  const queue = [...roots];
+  while (queue.length) {
+    const id = queue.shift()!;
+    const field = fields.find((item) => item.id === id);
+    if (!field || field.kind !== 'formula' || reachable.has(id)) continue;
+    reachable.add(id);
+    for (const token of field.tokens ?? []) if ('f' in token) queue.push(token.f);
+  }
+  return reachable;
+}
+
+export function validateFormForSave(fields: Field[], formOrder = fields.map((field) => field.id)): FormValidationIssue[] {
+  const placed = new Set(formOrder);
+  const placedFields = formOrder.flatMap((id) => {
+    const field = fields.find((item) => item.id === id);
+    return field ? [field] : [];
+  });
+  if (!placedFields.length) return [{ code: 'empty_form', message: 'Biểu mẫu chưa có trường dữ liệu.' }];
   const issues: FormValidationIssue[] = [];
+  const requiredFormulaIds = new Set<string>();
 
   for (const required of REQUIRED_ROLES) {
     const field = findSemanticField(fields, required.role);
-    if (!field) issues.push({ code: `missing_${required.role}`, message: `Thiếu trường ${required.label} cần cho phiếu bán hàng và báo cáo.` });
+    if (!field || !placed.has(field.id)) issues.push({ code: `missing_${required.role}`, message: `Thiếu trường ${required.label} cần cho phiếu bán hàng và báo cáo.` });
+    else if (field.kind === 'formula') requiredFormulaIds.add(field.id);
   }
 
-  for (const field of fields) issues.push(...validateInputField(field));
+  for (const field of placedFields) issues.push(...validateInputField(field));
 
-  for (const field of fields.filter((item) => item.kind === 'formula')) {
+  const formulaRoots = placedFields.filter((field) => field.kind === 'formula').map((field) => field.id);
+  const formulaIds = reachableFormulaIds(fields, [...formulaRoots, ...requiredFormulaIds]);
+  for (const field of fields.filter((item) => item.kind === 'formula' && formulaIds.has(item.id))) {
     const diagnostic = diagnoseFormula(fields, field.id);
     const alreadyExplained = diagnostic.code === 'input_missing' && diagnostic.fieldId && issues.some((issue) => issue.fieldId === diagnostic.fieldId);
     if (diagnostic.code !== 'valid' && !alreadyExplained) {
@@ -104,7 +126,7 @@ export function validateFormForSave(fields: Field[]): FormValidationIssue[] {
 
   for (const required of REPORT_NUMERIC_FIELDS) {
     const field = findSemanticField(fields, required.role);
-    if (!field) continue;
+    if (!field || !placed.has(field.id)) continue;
     const value = field.kind === 'formula' ? calc(fields, field.id) : parseNumber(field.value);
     if (!Number.isFinite(value)) {
       if (!issues.some((issue) => issue.fieldId === field.id)) issues.push({ code: `invalid_${required.role}`, message: `${required.label} chưa có giá trị hợp lệ.`, fieldId: field.id });

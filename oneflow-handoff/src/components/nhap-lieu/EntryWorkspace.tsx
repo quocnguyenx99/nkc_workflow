@@ -4,6 +4,7 @@ import { calc, formatFormulaResult, type Field } from '@/lib/formula';
 import { diagnoseFormula } from '@/lib/formula-diagnostics';
 import { findSemanticField } from '@/lib/field-semantics';
 import { useFormStore } from '@/store/form';
+import { isV6BuilderEnabled } from '@/store/form-persistence';
 
 interface Props {
   onSave: () => void;
@@ -63,11 +64,19 @@ function InputControl({ field, invalid, onChange }: { field: Field; invalid: boo
 
 export function EntryWorkspace({ onSave, duplicateNotice }: Props) {
   const fields = useFormStore((state) => state.fields);
+  const formOrder = useFormStore((state) => state.formOrder);
   const validation = useFormStore((state) => state.validation);
   const setValue = useFormStore((state) => state.setValue);
   const toast = useFormStore((state) => state.toast);
   const lastSlip = useFormStore((state) => state.slips[0]);
-  const total = findSemanticField(fields, 'total');
+  const effectiveOrder = isV6BuilderEnabled(typeof window === 'undefined' ? undefined : window.localStorage)
+    ? formOrder
+    : fields.map((field) => field.id);
+  const placedFields = effectiveOrder.flatMap((id) => {
+    const field = fields.find((item) => item.id === id);
+    return field ? [field] : [];
+  });
+  const total = findSemanticField(placedFields, 'total');
   const totalValue = total ? calc(fields, total.id) : NaN;
 
   return (
@@ -105,7 +114,7 @@ export function EntryWorkspace({ onSave, duplicateNotice }: Props) {
             <span className="text-[11px] font-bold text-primary bg-primary-soft rounded-full px-2.5 py-1 whitespace-nowrap">* Bắt buộc</span>
           </div>
           <div className="grid grid-cols-12 gap-x-3 gap-y-4">
-            {fields.map((field) => {
+            {placedFields.map((field) => {
               const issues = validation.filter((issue) => issue.fieldId === field.id);
               const style = { gridColumn: `span ${field.span} / span ${field.span}` } as CSSProperties;
               if (field.kind === 'formula') {

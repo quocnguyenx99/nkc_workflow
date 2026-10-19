@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { calc, parseNumber, type Field, type Span, type Token } from '@/lib/formula';
-import { findSemanticField, migrateLegacyFieldRoles } from '@/lib/field-semantics';
+import { findSemanticField } from '@/lib/field-semantics';
 import { validateFormForSave, type FormValidationIssue } from '@/lib/form-validation';
 import { presetTokens, salesTemplate, type PaletteItem, type PresetKey } from '@/data/template';
+import {
+  FORM_STORE_VERSION,
+  backupV2Envelope,
+  isV6BuilderEnabled,
+  migrateFormStateV3,
+} from './form-persistence';
 
 export type Mode = 'design' | 'test';
 
@@ -29,11 +35,12 @@ export type SaveResult =
   | { ok: false; reason: 'duplicate'; slip: SavedSlip };
 
 type UndoAction =
-  | { kind: 'delete'; field: Field; index: number; previousSelection: string | null }
-  | { kind: 'replace'; fields: Field[]; previousSelection: string | null };
+  | { kind: 'delete'; field: Field; index: number; placementIndex: number; previousSelection: string | null }
+  | { kind: 'replace'; fields: Field[]; formOrder: string[]; previousSelection: string | null };
 
-interface FormState {
+export interface FormState {
   fields: Field[];
+  formOrder: string[];
   mode: Mode;
   sel: string | null;
   seq: number;
@@ -50,6 +57,12 @@ interface FormState {
   setMode: (m: Mode) => void;
   select: (id: string | null) => void;
   add: (p: PaletteItem, index?: number) => string;
+  addDataField: (p: PaletteItem, placementIndex?: number) => string;
+  createFormula: (preset?: PresetKey) => string;
+  placeField: (id: string, placementIndex?: number) => void;
+  detachFormula: (id: string) => void;
+  movePlacedField: (from: number, to: number) => void;
+  removeDefinition: (id: string) => void;
   updateField: (id: string, patch: Partial<Field>) => void;
   setRole: (id: string, role: Field['role']) => void;
   remove: (id: string) => void;
@@ -102,8 +115,9 @@ function slipFrom(fields: Field[], code: string, fingerprint: string): SavedSlip
   };
 }
 
-function formFingerprint(fields: Field[]) {
-  return JSON.stringify(fields.map((field) => ({
+function formFingerprint(fields: Field[], formOrder: string[]) {
+  const placed = new Set(formOrder);
+  return JSON.stringify(fields.filter((field) => placed.has(field.id)).map((field) => ({
     id: field.id,
     value: field.kind === 'formula' ? calc(fields, field.id) : String(field.value ?? '').trim(),
   })));
@@ -118,21 +132,18 @@ function sameLegacyContent(left: SavedSlip, right: SavedSlip) {
     && left.total === right.total;
 }
 
-function migratedFields(fields: Field[]): Field[] {
-  return migrateLegacyFieldRoles(fields).map((field) => {
-    if (field.kind === 'formula') return { resultKind: 'money' as const, precision: 0, ...field };
-    const required = field.required ?? Boolean(field.role);
-    if (field.role === 'quantity') return { required, min: 1, integer: true, ...field };
-    if (field.role === 'unitPrice') return { required, min: 0, ...field };
-    if (field.role === 'discountRate') return { required, min: 0, max: 100, ...field };
-    return { required, ...field };
-  });
+function activeFormOrder(fields: Field[], formOrder: string[]) {
+  const v6 = isV6BuilderEnabled(typeof window === 'undefined' ? undefined : window.localStorage);
+  return v6 ? formOrder : fields.map((field) => field.id);
 }
+
+if (typeof window !== 'undefined') backupV2Envelope(window.localStorage);
 
 export const useFormStore = create<FormState>()(
   persist(
     (set, get) => ({
       fields: salesTemplate(),
+      formOrder: salesTemplate().map((field) => field.id),
       mode: 'design',
       sel: 'f4',
       seq: 1,
@@ -158,11 +169,58 @@ export const useFormStore = create<FormState>()(
           const isNum = ['number', 'money', 'percent'].includes(p.kind);
           field = { id, kind: p.kind, label: p.label + ' ' + s.seq, span: isNum ? 3 : 4, value: SAMPLE[p.kind] ?? '', required: false };
         }
+        const target = Math.max(0, Math.min(index ?? s.fields.length, s.fields.length));
         const fields = [...s.fields];
-        fields.splice(index ?? fields.length, 0, field);
-        set({ fields, sel: id, seq: s.seq + 1, toast: false, validation: [], updatedAt: Date.now() });
+        fields.splice(target, 0, field);
+        const formOrder = [...s.formOrder];
+        formOrder.splice(Math.max(0, Math.min(target, formOrder.length)), 0, id);
+        set({ fields, formOrder, sel: id, seq: s.seq + 1, toast: false, validation: [], updatedAt: Date.now() });
         return id;
       },
+
+      addDataField: (p, placementIndex) => {
+        const s = get();
+        const id = 'n' + s.seq;
+        const isNum = ['number', 'money', 'percent'].includes(p.kind);
+        const field: Field = { id, kind: p.kind, label: p.label + ' ' + s.seq, span: isNum ? 3 : 4, value: SAMPLE[p.kind] ?? '', required: false };
+        const target = Math.max(0, Math.min(placementIndex ?? s.formOrder.length, s.formOrder.length));
+        const formOrder = [...s.formOrder];
+        formOrder.splice(target, 0, id);
+        set({ fields: [...s.fields, field], formOrder, sel: id, seq: s.seq + 1, toast: false, validation: [], updatedAt: Date.now() });
+        return id;
+      },
+
+      createFormula: (preset = 'free') => {
+        const s = get();
+        const id = 'n' + s.seq;
+        const formula: Field = { id, kind: 'formula', label: `Công thức ${s.seq}`, span: 4, resultKind: 'money', precision: 0, tokens: presetTokens(preset) };
+        set({ fields: [...s.fields, formula], sel: id, seq: s.seq + 1, toast: false, validation: [], updatedAt: Date.now() });
+        return id;
+      },
+
+      placeField: (id, placementIndex) => set((s) => {
+        if (!s.fields.some((field) => field.id === id) || s.formOrder.includes(id)) return s;
+        const target = Math.max(0, Math.min(placementIndex ?? s.formOrder.length, s.formOrder.length));
+        const formOrder = [...s.formOrder];
+        formOrder.splice(target, 0, id);
+        return { formOrder, sel: id, toast: false, validation: [], updatedAt: Date.now() };
+      }),
+
+      detachFormula: (id) => set((s) => {
+        const field = s.fields.find((item) => item.id === id);
+        if (field?.kind !== 'formula' || !s.formOrder.includes(id)) return s;
+        return { formOrder: s.formOrder.filter((fieldId) => fieldId !== id), toast: false, validation: [], updatedAt: Date.now() };
+      }),
+
+      movePlacedField: (from, to) => set((s) => {
+        if (from < 0 || from >= s.formOrder.length || to < 0 || to >= s.formOrder.length || from === to) return s;
+        const formOrder = [...s.formOrder];
+        const [item] = formOrder.splice(from, 1);
+        formOrder.splice(to, 0, item);
+        return { formOrder, toast: false, validation: [], updatedAt: Date.now() };
+      }),
+
+      removeDefinition: (id) => get().remove(id),
 
       updateField: (id, patch) => set((s) => ({
         fields: s.fields.map((f) => (f.id === id ? { ...f, ...patch } : f)),
@@ -185,12 +243,14 @@ export const useFormStore = create<FormState>()(
         const index = s.fields.findIndex((field) => field.id === id);
         if (index < 0) return s;
         const field = s.fields[index];
+        const placementIndex = s.formOrder.indexOf(id);
         return {
           fields: s.fields.filter((item) => item.id !== id),
+          formOrder: s.formOrder.filter((fieldId) => fieldId !== id),
           sel: s.sel === id ? null : s.sel,
           toast: false,
           validation: [],
-          undoAction: { kind: 'delete', field, index, previousSelection: s.sel },
+          undoAction: { kind: 'delete', field, index, placementIndex, previousSelection: s.sel },
           undoLabel: `Đã xóa “${field.label}”.`,
           updatedAt: Date.now(),
         };
@@ -205,10 +265,14 @@ export const useFormStore = create<FormState>()(
 
       move: (from, to) =>
         set((s) => {
+          if (from < 0 || from >= s.fields.length || to < 0 || to >= s.fields.length || from === to) return s;
           const fields = [...s.fields];
           const [item] = fields.splice(from, 1);
           fields.splice(to, 0, item);
-          return { fields, toast: false, validation: [], updatedAt: Date.now() };
+          const formOrder = isV6BuilderEnabled(typeof window === 'undefined' ? undefined : window.localStorage)
+            ? fields.filter((field) => s.formOrder.includes(field.id)).map((field) => field.id)
+            : fields.map((field) => field.id);
+          return { fields, formOrder, toast: false, validation: [], updatedAt: Date.now() };
         }),
 
       setValue: (id, value) => {
@@ -280,19 +344,21 @@ export const useFormStore = create<FormState>()(
 
       loadTemplate: () => set((s) => ({
         fields: salesTemplate(),
+        formOrder: salesTemplate().map((field) => field.id),
         sel: 'f4',
         toast: false,
         validation: [],
-        undoAction: { kind: 'replace', fields: s.fields, previousSelection: s.sel },
+        undoAction: { kind: 'replace', fields: s.fields, formOrder: s.formOrder, previousSelection: s.sel },
         undoLabel: 'Đã nạp lại mẫu Phiếu bán hàng.',
         updatedAt: Date.now(),
       })),
       clearAll: () => set((s) => ({
         fields: [],
+        formOrder: [],
         sel: null,
         toast: false,
         validation: [],
-        undoAction: { kind: 'replace', fields: s.fields, previousSelection: s.sel },
+        undoAction: { kind: 'replace', fields: s.fields, formOrder: s.formOrder, previousSelection: s.sel },
         undoLabel: 'Đã làm trống biểu mẫu.',
         updatedAt: Date.now(),
       })),
@@ -300,23 +366,26 @@ export const useFormStore = create<FormState>()(
       undoLast: () => set((s) => {
         if (!s.undoAction) return s;
         if (s.undoAction.kind === 'replace') {
-          return { fields: s.undoAction.fields, sel: s.undoAction.previousSelection, undoAction: null, undoLabel: null, validation: [] };
+          return { fields: s.undoAction.fields, formOrder: s.undoAction.formOrder, sel: s.undoAction.previousSelection, undoAction: null, undoLabel: null, validation: [] };
         }
         const fields = [...s.fields];
         fields.splice(Math.min(s.undoAction.index, fields.length), 0, s.undoAction.field);
-        return { fields, sel: s.undoAction.previousSelection, undoAction: null, undoLabel: null, validation: [] };
+        const formOrder = [...s.formOrder];
+        if (s.undoAction.placementIndex >= 0) formOrder.splice(Math.min(s.undoAction.placementIndex, formOrder.length), 0, s.undoAction.field.id);
+        return { fields, formOrder, sel: s.undoAction.previousSelection, undoAction: null, undoLabel: null, validation: [] };
       }),
       dismissUndo: () => set({ undoAction: null, undoLabel: null }),
       clearValidation: () => set({ validation: [] }),
 
       save: () => {
         const s = get();
-        const issues = validateFormForSave(s.fields);
+        const formOrder = activeFormOrder(s.fields, s.formOrder);
+        const issues = validateFormForSave(s.fields, formOrder);
         if (issues.length) {
           set({ validation: issues, toast: false });
           return { ok: false as const, reason: 'validation' as const, issues };
         }
-        const fingerprint = formFingerprint(s.fields);
+        const fingerprint = formFingerprint(s.fields, formOrder);
         const now = Date.now();
         const candidate = slipFrom(s.fields, '', fingerprint);
         const duplicate = s.slips.find((slip) => slip.fingerprint === fingerprint || (!slip.fingerprint && sameLegacyContent(slip, candidate)))
@@ -346,20 +415,15 @@ export const useFormStore = create<FormState>()(
     }),
     {
       name: 'oneflow-form',
-      version: 2,
+      version: FORM_STORE_VERSION,
       migrate: (persisted) => {
-        const state = persisted as Partial<FormState> | undefined;
-        if (!state) return persisted;
-        return {
-          ...state,
-          fields: migratedFields(state.fields ?? salesTemplate()),
-          slips: state.slips ?? [],
-          lastSaveFingerprint: state.lastSaveFingerprint ?? null,
-          lastSaveAt: state.lastSaveAt ?? 0,
-          updatedAt: state.updatedAt ?? Date.now(),
-        } as FormState;
+        if (typeof window !== 'undefined') backupV2Envelope(window.localStorage, persisted);
+        return migrateFormStateV3(persisted) as unknown as FormState;
       },
-      partialize: (s) => ({ fields: s.fields, mode: s.mode, sel: s.sel, seq: s.seq, saved: s.saved, slips: s.slips, lastSaveFingerprint: s.lastSaveFingerprint, lastSaveAt: s.lastSaveAt, updatedAt: s.updatedAt }),
+      partialize: (s) => {
+        const extras = Object.fromEntries(Object.entries(s).filter(([key, value]) => typeof value !== 'function' && !['toast', 'validation', 'undoAction', 'undoLabel'].includes(key)));
+        return { ...extras, fields: s.fields, formOrder: s.formOrder, mode: s.mode, sel: s.sel, seq: s.seq, saved: s.saved, slips: s.slips, lastSaveFingerprint: s.lastSaveFingerprint, lastSaveAt: s.lastSaveAt, updatedAt: s.updatedAt };
+      },
     },
   ),
 );
