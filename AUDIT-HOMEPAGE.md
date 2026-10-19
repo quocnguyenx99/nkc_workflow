@@ -1,7 +1,7 @@
 # AUDIT UI/UX & MOTION — HOME NKC WORKFLOW
 
 **Ngày audit:** 17/10/2026  
-**Trang:** `/` — Home NKC OneFlow  
+**Trang:** `/` — Home NKC OneFlow  vvvvvvvvvvvvvvvvvvvvvvvv
 **Phạm vi:** source React/Tailwind/Motion, giao diện thực tế desktop/tablet/mobile, visual hierarchy, interaction, motion, responsive, accessibility và hiệu năng liên quan trực tiếp đến Home.  
 **Nguyên tắc:** chỉ audit và lập định hướng; chưa thay đổi source, business logic hoặc hành vi điều hướng.
 
