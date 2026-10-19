@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { BrandMark } from '@/components/home/BrandMark';
 
 
 /** Hộp kích thước cố định w×h, thu phóng theo bề rộng khả dụng (không phóng to quá 1). */
@@ -113,9 +114,7 @@ function Laptop({ pos = '' }: { pos?: string }) {
           </div>
           <div className="flex flex-1 min-h-0">
             <div className="w-40 border-r border-line px-2.5 py-3.5 flex flex-col gap-[3px] text-[11px] text-body shrink-0">
-              <span className="text-[14px] font-extrabold px-1.5 pb-3 text-ink">
-                One<span className="text-primary">Flow</span>
-              </span>
+              <span className="px-1.5 pb-3"><BrandMark variant="app" size="small" /></span>
               <span className="px-2 py-[7px] rounded-[7px] bg-primary-soft text-primary-hover font-bold">Tổng quan</span>
               <span className="px-2 py-[7px]">Nhập liệu</span>
               <span className="px-2 py-[7px]">Báo cáo</span>

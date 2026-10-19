@@ -110,6 +110,7 @@ test('mobile uses a single-pane, tap-first field flow', async ({ page }) => {
 
 test('V5 renderer remains available as the feature-flag rollback path', async ({ page }) => {
   await cleanV6(page, 1440, 900);
+  await page.getByRole('button', { name: 'Mở trường công thức', exact: true }).click();
   await page.getByRole('button', { name: '+ Công thức mới' }).click();
   await page.evaluate(() => localStorage.setItem('oneflow-builder-version', 'v5'));
   await page.reload();

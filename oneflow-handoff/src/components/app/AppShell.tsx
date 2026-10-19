@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { BrandMark } from '@/components/home/BrandMark';
 
 const ICONS = {
   home: (
@@ -52,11 +53,8 @@ export function AppSidebar({ active, pendingCount, group, user }: Props) {
       aria-label="Ứng dụng"
       className="app-sidebar w-full min-w-0 bg-white border-r border-line px-3.5 py-[18px] flex flex-col gap-1 box-border text-[14px] text-body max-[900px]:border-r-0 max-[900px]:border-b max-[900px]:flex-row max-[900px]:items-center max-[900px]:gap-3 max-[900px]:px-4 max-[900px]:py-2.5 max-[900px]:sticky max-[900px]:top-0 max-[900px]:z-20"
     >
-      <Link to="/" className="flex items-center gap-2.5 pt-1 px-2 pb-5 no-underline text-ink shrink-0 max-[900px]:p-0">
-        <span className="w-[34px] h-[34px] rounded-[10px] border-[1.5px] border-dashed border-dash flex items-center justify-center text-[8px] font-bold text-muted">LOGO</span>
-        <span className="text-[17px] font-extrabold tracking-[-.03em] max-[520px]:hidden">
-          One<span className="text-primary">Flow</span>
-        </span>
+      <Link to="/" aria-label="Về trang chủ NKC OneFlow" className="app-sidebar-brand flex items-center pt-1 px-2 pb-5 no-underline text-ink shrink-0 max-[900px]:p-0">
+        <BrandMark variant="app" />
       </Link>
       <div className="system-scrollbar flex flex-col gap-1 max-[900px]:flex-row max-[900px]:flex-1 max-[900px]:min-w-0 max-[900px]:overflow-x-auto">
         <NavLink to="/" end className={navCls}>
