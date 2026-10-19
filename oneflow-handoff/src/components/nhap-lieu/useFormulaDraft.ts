@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Field, FormulaResultKind, Token } from '@/lib/formula';
 import { useFormStore } from '@/store/form';
 
-export type FormulaEditorMode = 'basic' | 'advanced';
-
 export interface FormulaDraft {
   id: string;
   label: string;
@@ -24,21 +22,12 @@ function fromField(field: Field): FormulaDraft {
   };
 }
 
-export function isBasicFormula(tokens: Token[]) {
-  if (tokens.length === 0) return true;
-  if (tokens.length !== 3) return false;
-  const operand = (token: Token) => 'f' in token || 'n' in token || 's' in token;
-  return operand(tokens[0]) && 'o' in tokens[1] && !['(', ')'].includes(tokens[1].o) && operand(tokens[2]);
-}
-
 export function useFormulaDraft(fields: Field[], selectedId: string | null) {
   const committed = fields.find((field) => field.id === selectedId && field.kind === 'formula') ?? null;
   const [draft, setDraft] = useState<FormulaDraft | null>(() => committed ? fromField(committed) : null);
-  const [mode, setMode] = useState<FormulaEditorMode>(() => committed && !isBasicFormula(committed.tokens ?? []) ? 'advanced' : 'basic');
 
   useEffect(() => {
     setDraft(committed ? fromField(committed) : null);
-    setMode(committed && !isBasicFormula(committed.tokens ?? []) ? 'advanced' : 'basic');
   }, [committed]);
 
   const dirty = Boolean(committed && draft && JSON.stringify(fromField(committed)) !== JSON.stringify(draft));
@@ -59,5 +48,5 @@ export function useFormulaDraft(fields: Field[], selectedId: string | null) {
   };
   const discard = () => setDraft(committed ? fromField(committed) : null);
 
-  return { committed, draft, dirty, mode, setMode, setDraft, patchDraft, previewFields, apply, discard };
+  return { committed, draft, dirty, setDraft, patchDraft, previewFields, apply, discard };
 }

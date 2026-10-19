@@ -608,8 +608,7 @@ select {
   .v6-field-label select,
   .v6-field-label textarea,
   .v6-formula-title-row input,
-  .v6-basic-editor select,
-  .v6-basic-editor input,
+  .v6-formula-search input,
   .v6-result-settings select,
   .v6-result-settings input,
   .v6-constant-row input {
@@ -629,8 +628,7 @@ select {
   .v6-field-label select:focus,
   .v6-field-label textarea:focus,
   .v6-formula-title-row input:focus,
-  .v6-basic-editor select:focus,
-  .v6-basic-editor input:focus,
+  .v6-formula-search:focus-within,
   .v6-result-settings select:focus,
   .v6-result-settings input:focus,
   .v6-constant-row input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
@@ -695,38 +693,66 @@ select {
   .v6-formula-title-row { display: flex; align-items: flex-end; gap: 8px; }
   .v6-formula-title-row label,
   .v6-field-label,
-  .v6-operand label,
-  .v6-basic-operator,
   .v6-result-settings label { display: flex; flex-direction: column; gap: 5px; color: var(--color-body); font-size: 11px; font-weight: 750; }
   .v6-status-pill { flex: none; margin-bottom: 8px; border-radius: 999px; background: var(--color-amber-soft); padding: 5px 8px; color: var(--color-amber-deep); font-size: 10px; font-weight: 800; }
   .v6-status-pill.is-valid { background: var(--color-green-soft); color: var(--color-green-deep); }
-  .v6-mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; border-radius: 10px; background: var(--color-hover); padding: 4px; }
-  .v6-mode-tabs button { min-height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--color-muted); font-size: 12px; font-weight: 800; cursor: pointer; }
-  .v6-mode-tabs button[aria-selected='true'] { background: #fff; color: var(--color-ink); box-shadow: 0 1px 4px rgba(11,18,32,.12); }
-  .v6-mode-tabs button:disabled { opacity: .4; cursor: not-allowed; }
-  .v6-inline-note { border-radius: 9px; background: var(--color-amber-soft); padding: 9px 10px; color: var(--color-amber-deep); font-size: 11px; line-height: 1.45; }
-  .v6-basic-editor { display: grid; grid-template-columns: minmax(0,1fr) 82px minmax(0,1fr); align-items: start; gap: 8px; border: 1px solid var(--color-violet-line); border-radius: 12px; background: var(--color-violet-card); padding: 12px; }
-  .v6-constant { margin-top: 6px; }
-  .v6-advanced-editor { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--color-violet-line); border-radius: 12px; background: var(--color-violet-card); padding: 12px; }
-  .v6-token-canvas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 54px; border: 1px dashed var(--color-violet-line); border-radius: 10px; background: #fff; padding: 9px; }
-  .v6-token { border-radius: 7px; padding: 6px 8px; font: 700 11px monospace; cursor: grab; }
-  .v6-token-actions { display: flex; align-items: center; gap: 4px; border: 1px solid var(--color-line); border-radius: 8px; background: #fff; padding: 6px; font-size: 10px; }
-  .v6-token-actions span { flex: 1; }
-  .v6-token-actions button { border: 1px solid var(--color-line); border-radius: 6px; background: #fff; min-width: 28px; min-height: 26px; }
-  .v6-editor-group { display: flex; flex-direction: column; gap: 6px; }
-  .v6-editor-group > span { color: var(--color-body); font-size: 10px; font-weight: 800; }
-  .v6-editor-group .chipbtn { min-height: 31px; border: 1px solid var(--color-violet-line); border-radius: 7px; background: #fff; padding: 4px 7px; color: var(--color-violet-text); font-size: 10px; font-weight: 700; cursor: pointer; }
-  .v6-editor-group .chipbtn.is-operator { min-height: 36px; color: var(--color-ink); font: 800 14px monospace; }
+  .v6-live-result { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--color-line); border-left: 3px solid #d19a16; border-radius: 10px; background: #fff; padding: 10px 11px; }
+  .v6-live-result.is-valid { border-left-color: #159570; background: #f7fcfa; }
+  .v6-live-result-value { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .v6-live-result-value span { color: var(--color-muted); font-size: 10px; font-weight: 750; }
+  .v6-live-result-value strong { overflow-wrap: anywhere; color: var(--color-violet-text); font-size: 17px; font-weight: 850; text-align: right; }
+  .v6-live-result-message { display: flex; align-items: flex-start; gap: 6px; color: var(--color-amber-deep); font-size: 10px; font-weight: 700; line-height: 1.4; }
+  .v6-live-result.is-valid .v6-live-result-message { color: var(--color-green-deep); }
+  .v6-live-result-message svg { flex: none; margin-top: 1px; }
+  .v6-expression-editor { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); padding: 12px 0; }
+  .v6-editor-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+  .v6-editor-heading > div { display: flex; align-items: baseline; gap: 7px; }
+  .v6-editor-heading strong { color: var(--color-ink); font-size: 11px; }
+  .v6-editor-heading span { color: var(--color-muted); font-size: 9px; }
+  .v6-editor-heading kbd { border: 1px solid var(--color-line-3); border-radius: 4px; background: #fff; padding: 0 4px; color: var(--color-body); font: 700 9px monospace; }
+  .v6-token-canvas { display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start; min-height: 76px; max-height: 230px; overflow-y: auto; border: 1px solid var(--color-violet-line); border-radius: 10px; background: #fbfaff; padding: 9px 6px; box-shadow: inset 0 1px 2px rgba(34,25,75,.04); }
+  .v6-token-unit { display: inline-flex; align-items: center; min-width: 0; }
+  .v6-token { max-width: 190px; overflow: hidden; border-radius: 7px; padding: 6px 8px; font: 700 11px monospace; text-overflow: ellipsis; white-space: nowrap; cursor: grab; transition: transform .12s ease, box-shadow .12s ease; }
+  .v6-token:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(35,27,70,.1); }
+  .v6-insert-point { display: grid; place-items: center; width: 10px; min-height: 30px; border: 0; background: transparent; padding: 0 3px; cursor: text; }
+  .v6-insert-point span { width: 2px; height: 20px; border-radius: 2px; background: transparent; }
+  .v6-insert-point:hover span,
+  .v6-insert-point:focus-visible span,
+  .v6-insert-point.is-active span { background: var(--color-primary); }
+  .v6-empty-formula { display: flex; flex: 1; min-width: 220px; min-height: 56px; border: 0; background: transparent; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--color-muted); cursor: pointer; }
+  .v6-empty-formula strong { color: var(--color-body); font-size: 11px; }
+  .v6-empty-formula span { font-size: 9px; }
+  .v6-selection-bar { display: flex; align-items: center; gap: 5px; min-height: 28px; color: var(--color-muted); font-size: 9px; }
+  .v6-selection-bar > span { flex: 1; }
+  .v6-selection-bar button { display: inline-flex; align-items: center; gap: 3px; min-height: 27px; border: 1px solid var(--color-line); border-radius: 6px; background: #fff; padding: 3px 6px; color: var(--color-body); font-size: 9px; font-weight: 750; cursor: pointer; }
+  .v6-field-picker { overflow: hidden; border: 1px solid var(--color-line); border-radius: 10px; background: #fff; }
+  .v6-formula-search { display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--color-line); padding: 0 9px; color: var(--color-muted); }
+  .v6-formula-search input { min-width: 0; min-height: 38px; border: 0; padding: 5px 0; box-shadow: none !important; font-size: 11px; }
+  .v6-formula-search button { display: grid; place-items: center; width: 26px; height: 26px; border: 0; border-radius: 6px; background: transparent; color: var(--color-muted); cursor: pointer; }
+  .v6-formula-search button:hover { background: var(--color-hover); }
+  .v6-field-results { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; max-height: 152px; overflow-y: auto; background: var(--color-line); }
+  .v6-field-option { display: flex; min-width: 0; min-height: 42px; border: 0; background: #fff; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 6px 9px; text-align: left; cursor: pointer; }
+  .v6-field-option:hover,
+  .v6-field-option:focus-visible { position: relative; z-index: 1; background: var(--color-violet-soft); outline: 1px solid var(--color-violet-line); }
+  .v6-field-option span { width: 100%; overflow: hidden; color: var(--color-ink); font-size: 10px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+  .v6-field-option small { color: var(--color-muted); font-size: 8px; }
+  .v6-no-field-result { grid-column: 1 / -1; background: #fff; padding: 13px; color: var(--color-muted); font-size: 10px; text-align: center; }
+  .v6-quick-insert { display: grid; grid-template-columns: minmax(180px,1fr) minmax(0,1.35fr); gap: 7px; }
+  .v6-operator-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 4px; }
+  .v6-operator-row button { min-width: 0; min-height: 38px; border: 1px solid var(--color-line-3); border-radius: 8px; background: #fff; color: var(--color-ink); font: 800 14px monospace; cursor: pointer; }
+  .v6-operator-row button:hover { border-color: var(--color-violet-line); background: var(--color-violet-soft); color: var(--color-violet-text); }
   .v6-constant-row { display: flex; gap: 6px; }
   .v6-constant-row button { flex: none; border: 0; border-radius: 8px; background: #0b1220; padding: 0 10px; color: #fff; font-size: 11px; font-weight: 800; }
+  .v6-constant-row button:disabled { opacity: .4; cursor: not-allowed; }
+  .v6-clear-formula { display: inline-flex; align-self: flex-start; align-items: center; gap: 5px; border: 0; background: transparent; padding: 2px 0; color: var(--color-muted); font-size: 9px; font-weight: 750; cursor: pointer; }
+  .v6-clear-formula:hover { color: var(--color-red-text); }
+  .v6-result-format { border: 1px solid var(--color-line); border-radius: 10px; background: #fff; }
+  .v6-result-format summary { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 7px; padding: 10px 11px; color: var(--color-body); font-size: 10px; font-weight: 800; list-style: none; cursor: pointer; }
+  .v6-result-format summary::-webkit-details-marker { display: none; }
+  .v6-result-format summary > span:nth-child(2) { color: var(--color-muted); font-size: 9px; font-weight: 600; }
+  .v6-result-format[open] summary svg { transform: rotate(180deg); }
   .v6-result-settings { display: grid; grid-template-columns: 1fr 100px; gap: 8px; }
-  .v6-preview-card { border: 1px solid var(--color-line); border-radius: 12px; background: #fff; padding: 12px; }
-  .v6-preview-card > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .v6-preview-card span { color: var(--color-muted); font-size: 11px; }
-  .v6-preview-card strong { color: var(--color-violet-text); font-size: 16px; }
-  .v6-preview-card p { margin: 8px 0 0; border-radius: 8px; padding: 7px; font-size: 10px; font-weight: 700; }
-  .v6-preview-card p.is-valid { background: var(--color-green-soft); color: var(--color-green-deep); }
-  .v6-preview-card p.is-warning { background: var(--color-amber-soft); color: var(--color-amber-deep); }
+  .v6-result-format .v6-result-settings { border-top: 1px solid var(--color-line); padding: 10px; }
   .v6-apply-bar { position: sticky; bottom: -14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 -14px -14px; border-top: 1px solid var(--color-line); background: rgba(255,255,255,.96); padding: 10px 14px max(12px,env(safe-area-inset-bottom)); backdrop-filter: blur(10px); }
   .v6-setup-rail { display: flex; width: 100%; height: 100%; border: 0; background: #fff; flex-direction: column; align-items: center; gap: 10px; padding-top: 14px; cursor: pointer; }
   .v6-setup-rail span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--color-violet-soft); color: var(--color-violet-text); font-size: 10px; font-weight: 900; }
@@ -784,16 +810,12 @@ select {
   .v6-workspace-backbar span { color: var(--color-muted); font-size: 10px; }
   .v6-formula-workspace .v6-setup-panel { flex: 1; }
   .v6-formula-workspace .v6-setup-header { display: none; }
-  .v6-formula-workspace .v6-formula-editor { display: grid; grid-template-columns: minmax(520px,1.5fr) minmax(280px,.7fr); align-content: start; gap: 16px; padding: 20px; }
-  .v6-formula-workspace .v6-formula-title-row,
-  .v6-formula-workspace .v6-mode-tabs,
-  .v6-formula-workspace .v6-inline-note,
-  .v6-formula-workspace .v6-advanced-editor,
-  .v6-formula-workspace .v6-basic-editor { grid-column: 1; }
-  .v6-formula-workspace .v6-result-settings,
-  .v6-formula-workspace .v6-preview-card { grid-column: 2; }
-  .v6-formula-workspace .v6-result-settings { grid-row: 1 / span 2; margin-top: 58px; }
-  .v6-formula-workspace .v6-preview-card { grid-row: 2 / span 3; margin-top: 56px; align-self: start; }
+  .v6-formula-workspace .v6-formula-editor { display: grid; grid-template-columns: minmax(560px,1.6fr) minmax(280px,.72fr); align-content: start; gap: 16px; padding: 20px; }
+  .v6-formula-workspace .v6-formula-title-row { grid-column: 1; grid-row: 1; }
+  .v6-formula-workspace .v6-expression-editor { grid-column: 1; grid-row: 2 / span 3; }
+  .v6-formula-workspace .v6-live-result { grid-column: 2; grid-row: 1; }
+  .v6-formula-workspace .v6-result-format { grid-column: 2; grid-row: 2; align-self: start; }
+  .v6-formula-workspace .v6-field-results { grid-template-columns: repeat(3,minmax(0,1fr)); max-height: 210px; }
   .v6-formula-workspace .v6-apply-bar { grid-column: 1 / -1; position: sticky; bottom: 0; margin: 0; }
 
   .v6-builder-frame.is-form-expanded .v6-builder-grid { grid-template-columns: minmax(0,1fr); }
@@ -845,12 +867,9 @@ select {
   .v6-compact-only { display: inline-flex; }
   .v6-formula-workspace .v6-formula-editor { grid-template-columns: minmax(0,1fr); }
   .v6-formula-workspace .v6-formula-title-row,
-  .v6-formula-workspace .v6-mode-tabs,
-  .v6-formula-workspace .v6-inline-note,
-  .v6-formula-workspace .v6-advanced-editor,
-  .v6-formula-workspace .v6-basic-editor,
-  .v6-formula-workspace .v6-result-settings,
-  .v6-formula-workspace .v6-preview-card,
+  .v6-formula-workspace .v6-expression-editor,
+  .v6-formula-workspace .v6-live-result,
+  .v6-formula-workspace .v6-result-format,
   .v6-formula-workspace .v6-apply-bar { grid-column: 1; grid-row: auto; margin-top: 0; }
 }
 
@@ -866,7 +885,7 @@ select {
   .v6-form-toolbar { align-items: flex-start; }
   .v6-form-toolbar-actions { flex-wrap: wrap; justify-content: flex-end; }
   .v6-form-intro { flex-direction: column; }
-  .v6-basic-editor { grid-template-columns: 1fr; }
+  .v6-quick-insert { grid-template-columns: 1fr; }
   .v6-result-settings { grid-template-columns: 1fr 90px; }
   .v6-properties-layer { position: fixed; }
   .v6-properties-drawer { width: 100%; }

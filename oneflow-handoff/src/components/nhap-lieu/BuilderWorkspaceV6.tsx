@@ -210,8 +210,6 @@ export function BuilderWorkspaceV6({ onGuideProgress, onRequestDelete, onLoadTem
     draft: draft.draft,
     previewFields: draft.previewFields,
     dirty: draft.dirty,
-    mode: draft.mode,
-    onModeChange: draft.setMode,
     onPatch: draft.patchDraft,
     onApply: () => { draft.apply(); onGuideProgress(3); },
     onDiscard: draft.discard,

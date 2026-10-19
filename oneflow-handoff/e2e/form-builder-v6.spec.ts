@@ -30,14 +30,18 @@ test('V6 desktop uses four ordered work areas and 1440 keeps a usable Form besid
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('formula definition can be created, edited in Basic mode, placed, detached and restored after reload', async ({ page }) => {
+test('formula definition can be created in the unified editor, placed, detached and restored after reload', async ({ page }) => {
   await cleanV6(page);
   await page.getByRole('button', { name: '+ Công thức mới' }).click();
   await page.getByLabel('Tên công thức').fill('Thành tiền thử');
-  const basicSelects = page.locator('.v6-basic-editor select');
-  await basicSelects.nth(0).selectOption({ label: 'Số lượng' });
-  await basicSelects.nth(1).selectOption('×');
-  await basicSelects.nth(2).selectOption({ label: 'Đơn giá' });
+  await expect(page.getByRole('tab', { name: /Cơ bản|Nâng cao/ })).toHaveCount(0);
+  const fieldSearch = page.getByPlaceholder('Tìm trường để chèn…');
+  await fieldSearch.fill('so luong');
+  await expect(page.getByRole('button', { name: 'Chèn trường Số lượng' })).toBeVisible();
+  await fieldSearch.press('Enter');
+  await page.getByRole('button', { name: 'Chèn Nhân' }).click();
+  await fieldSearch.fill('don gia');
+  await fieldSearch.press('Enter');
   await expect(page.getByRole('complementary', { name: 'Setup công thức' })).toContainText('15.000.000 ₫');
   await page.getByRole('button', { name: 'Áp dụng', exact: true }).click();
 

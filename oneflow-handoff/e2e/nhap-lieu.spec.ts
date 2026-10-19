@@ -72,8 +72,8 @@ test('P1: palette drag/drop, field settings and editable formula tokens', async 
   await token.click();
   await expect(page.getByText(/Đang chọn token 1/)).toBeVisible();
   await page.getByPlaceholder('Hằng số, ví dụ 7,5').fill('2.5');
-  await page.getByRole('button', { name: 'Thêm số' }).click();
-  await expect(page.getByRole('button', { name: '2.5' })).toBeVisible();
+  await page.getByRole('button', { name: 'Chèn số' }).click();
+  await expect(page.getByRole('button', { name: '2.5', exact: true })).toBeVisible();
   await page.getByLabel('Loại kết quả').selectOption('number');
   await page.getByLabel('Số lẻ').fill('2');
   await expect(page.getByRole('complementary', { name: 'Setup công thức' })).toContainText(',50');
