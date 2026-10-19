@@ -74,7 +74,6 @@ export function BuilderWorkspaceV6({ onGuideProgress, onRequestDelete, onLoadTem
   const [formulaOpen, setFormulaOpen] = useState(false);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const [formulaExpanded, setFormulaExpanded] = useState(false);
-  const [formExpanded, setFormExpanded] = useState(false);
   const [setupCollapsed, setSetupCollapsed] = useState(false);
   const [activePane, setActivePane] = useState<Pane>('form');
   const [setupWidth, setSetupWidth] = useState(400);
@@ -100,14 +99,13 @@ export function BuilderWorkspaceV6({ onGuideProgress, onRequestDelete, onLoadTem
     const onEscape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || dragging) return;
       if (formulaExpanded) setFormulaExpanded(false);
-      else if (formExpanded) setFormExpanded(false);
       else if (propertiesOpen) setPropertiesOpen(false);
       else if (dataOpen) { setDataOpen(false); window.setTimeout(() => dataRailRef.current?.focus(), 0); }
       else if (formulaOpen) { setFormulaOpen(false); window.setTimeout(() => formulaRailRef.current?.focus(), 0); }
     };
     window.addEventListener('keydown', onEscape);
     return () => window.removeEventListener('keydown', onEscape);
-  }, [dataOpen, dragging, formExpanded, formulaExpanded, formulaOpen, propertiesOpen]);
+  }, [dataOpen, dragging, formulaExpanded, formulaOpen, propertiesOpen]);
 
   const commitFormulaSelection = (id: string) => {
     select(id);
@@ -221,7 +219,7 @@ export function BuilderWorkspaceV6({ onGuideProgress, onRequestDelete, onLoadTem
 
   return (
     <DndContext sensors={sensors} collisionDetection={collision} measuring={{ droppable: { strategy: MeasuringStrategy.Always } }} autoScroll={{ acceleration: 5, interval: 10, threshold: { x: 0.08, y: 0.18 }, canScroll: (element) => element instanceof HTMLElement && element.dataset.dndScroll === 'true' }} onDragStart={onDragStart} onDragOver={(event) => { const id = event.over ? String(event.over.id) : null; setOverId(id); if (id) lastOverRef.current = id; }} onDragEnd={onDragEnd} onDragCancel={() => { setDragging(null); setOverId(null); lastOverRef.current = null; }}>
-      <div className={`builder-workspace-frame v6-builder-frame${formExpanded ? ' is-form-expanded' : ''}${setupCollapsed ? ' is-setup-collapsed' : ''}`} style={frameStyle}>
+      <div className={`builder-workspace-frame v6-builder-frame${setupCollapsed ? ' is-setup-collapsed' : ''}`} style={frameStyle}>
         <nav className="v6-workspace-tabs" aria-label="Khu vực Form Builder">
           {(['data', 'formula', 'setup', 'form'] as Pane[]).map((pane, index) => <button key={pane} type="button" className={activePane === pane ? 'is-active' : ''} onClick={() => { setActivePane(pane); if (pane === 'data') setDataOpen(true); if (pane === 'formula') setFormulaOpen(true); }}>{index + 1}. {pane === 'data' ? 'Dữ liệu' : pane === 'formula' ? 'Công thức' : pane === 'setup' ? 'Setup' : 'Form'}</button>)}
         </nav>
@@ -238,7 +236,7 @@ export function BuilderWorkspaceV6({ onGuideProgress, onRequestDelete, onLoadTem
             {setupCollapsed ? <button type="button" className="v6-setup-rail" onClick={() => setSetupCollapsed(false)}><span>3</span><strong>Setup</strong></button> : <FormulaSetupPanel {...setupProps} onExpand={() => setFormulaExpanded(true)} onClose={() => { setSetupCollapsed(true); setActivePane('form'); }} />}
             {!setupCollapsed && <button type="button" className="v6-resize-handle" onPointerDown={startResize} aria-label="Thay đổi độ rộng Setup công thức" />}
           </div>
-          <FormWorkspace fields={fields} placedFields={placedFields} selectedId={selectedId} initialIds={initialIds} dragging={Boolean(dragging)} overId={overId} onSelect={selectCard} onRemoveFromForm={removeFromForm} onOpenData={() => { setDataOpen(true); setActivePane('data'); }} onOpenFormula={() => { setFormulaOpen(true); setActivePane('formula'); }} onOpenProperties={() => selected?.kind !== 'formula' && setPropertiesOpen(true)} onExpand={() => setFormExpanded((value) => !value)} onLoadTemplate={onLoadTemplate} />
+          <FormWorkspace fields={fields} placedFields={placedFields} selectedId={selectedId} initialIds={initialIds} dragging={Boolean(dragging)} overId={overId} onSelect={selectCard} onRemoveFromForm={removeFromForm} onOpenData={() => { setDataOpen(true); setActivePane('data'); }} onOpenFormula={() => { setFormulaOpen(true); setActivePane('formula'); }} onOpenProperties={() => selected?.kind !== 'formula' && setPropertiesOpen(true)} onLoadTemplate={onLoadTemplate} />
         </div>
         <FieldPropertiesDrawer field={selected?.kind === 'formula' ? null : selected} open={propertiesOpen} onClose={() => setPropertiesOpen(false)} onRequestDelete={onRequestDelete} />
         {pendingFormulaId && <div className="v6-draft-dialog-layer" role="presentation"><section role="dialog" aria-modal="true" aria-label="Thay đổi công thức chưa áp dụng" className="v6-draft-dialog"><h2>Thay đổi chưa được áp dụng</h2><p>Bạn muốn lưu bản nháp hiện tại trước khi chuyển sang công thức khác?</p><div><button type="button" onClick={() => setPendingFormulaId(null)} className="v6-secondary-button">Ở lại</button><button type="button" onClick={() => { draft.discard(); const id = pendingFormulaId; setPendingFormulaId(null); commitFormulaSelection(id); }} className="v6-secondary-button">Bỏ thay đổi</button><button type="button" onClick={() => { draft.apply(); const id = pendingFormulaId; setPendingFormulaId(null); commitFormulaSelection(id); }} className="v6-primary-button">Áp dụng & chuyển</button></div></section></div>}

@@ -30,6 +30,48 @@ test('V6 desktop uses four ordered work areas and 1440 keeps a usable Form besid
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
+test('Form Workspace preview is clean, calculated and preserves the active design draft', async ({ page }) => {
+  await cleanV6(page);
+  await expect(page.getByRole('button', { name: 'Mở rộng Form Workspace' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Chỉnh công thức Tổng thanh toán' }).click();
+  await page.getByLabel('Tên công thức').fill('Tổng thanh toán đang sửa');
+
+  const previewButton = page.getByRole('button', { name: 'Xem trước' });
+  await expect(previewButton).toBeVisible();
+  await previewButton.click();
+  const dialog = page.getByRole('dialog', { name: 'Phiếu bán hàng' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Công ty TNHH Minh Phát')).toBeVisible();
+  await expect(dialog.getByText('15.675.000 ₫')).toHaveCount(2);
+  await expect(dialog.locator('.entry-cell')).toHaveCount(11);
+  await expect(dialog.getByText('Tổng thanh toán đang sửa')).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: /sửa|kéo|xóa/i })).toHaveCount(0);
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByLabel('Tên công thức')).toHaveValue('Tổng thanh toán đang sửa');
+  await expect(previewButton).toBeFocused();
+});
+
+test('Form Workspace preview is full-screen friendly on mobile', async ({ page }) => {
+  await cleanV6(page, 390, 844);
+  await page.getByRole('button', { name: '4. Form' }).click();
+  await page.getByRole('button', { name: 'Xem trước' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Phiếu bán hàng' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Quay lại thiết kế' })).toBeVisible();
+  const bounds = await dialog.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  });
+  expect(bounds.width).toBeLessThanOrEqual(390);
+  expect(bounds.height).toBeLessThanOrEqual(844);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await dialog.getByRole('button', { name: 'Quay lại thiết kế' }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
 test('formula definition can be created in the unified editor, placed, detached and restored after reload', async ({ page }) => {
   await cleanV6(page);
   await page.getByRole('button', { name: '+ Công thức mới' }).click();
@@ -67,6 +109,70 @@ test('Formula Workspace preserves an unapplied draft and Cancel restores committ
   await expect(page.getByLabel('Tên công thức')).toHaveValue('Tổng thanh toán đang sửa');
   await page.getByRole('button', { name: 'Hủy thay đổi' }).click();
   await expect(page.getByLabel('Tên công thức')).toHaveValue('Tổng thanh toán');
+});
+
+test('direct formula input supports keyboard autocomplete, paste, live validation and token sync', async ({ page }) => {
+  await cleanV6(page);
+  await page.getByRole('button', { name: 'Chỉnh công thức Tổng thanh toán' }).click();
+  const input = page.getByRole('combobox', { name: 'Nhập công thức' });
+  const savedTokens = await page.evaluate(() => JSON.parse(localStorage.getItem('oneflow-form')!).state.fields.find((field: { id: string }) => field.id === 'f4').tokens);
+
+  await input.fill('[');
+  await expect(page.getByRole('group', { name: /Dữ liệu/ })).toBeVisible();
+  const formulaGroup = page.getByRole('group', { name: /Công thức/ });
+  await expect(formulaGroup).toBeVisible();
+  await expect(formulaGroup.getByRole('option', { name: /Thành tiền/ })).toBeVisible();
+  await expect(formulaGroup.getByRole('option', { name: /Tổng thanh toán/ })).toHaveAttribute('aria-disabled', 'true');
+  await input.press('Escape');
+
+  await input.fill('thanh t');
+  await input.press('Enter');
+  await expect(input).toHaveValue('[Thành tiền]');
+  await expect(page.getByRole('complementary', { name: 'Setup công thức' }).getByText('15.000.000 ₫', { exact: true })).toBeVisible();
+
+  await input.fill('don');
+  await expect(page.getByRole('listbox', { name: 'Gợi ý trường công thức' })).toBeVisible();
+  await input.press('Escape');
+  await expect(page.getByRole('listbox', { name: 'Gợi ý trường công thức' })).toHaveCount(0);
+  await input.fill('so lu');
+  await expect(page.getByRole('option', { name: /Số lượng/ })).toBeVisible();
+  await input.press('ArrowDown');
+  await input.press('Enter');
+  await expect(input).toHaveValue('[Số lượng]');
+  await input.press('End');
+  await input.pressSequentially(' * don g');
+  await expect(page.getByRole('option', { name: /Đơn giá/ })).toBeVisible();
+  await input.press('Tab');
+  await expect(input).toHaveValue('[Số lượng] * [Đơn giá]');
+  const setup = page.getByRole('complementary', { name: 'Setup công thức' });
+  await expect(setup.getByText('15.000.000 ₫', { exact: true })).toBeVisible();
+
+  await input.fill('=([Số lượng] + 4) / 2');
+  await expect(setup.getByText('8 ₫', { exact: true })).toBeVisible();
+  await input.fill('([Số lượng] + 3) /');
+  await expect(page.getByRole('alert')).toContainText('sau phép tính cuối');
+  await expect(page.getByRole('button', { name: 'Áp dụng', exact: true })).toBeDisabled();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('oneflow-form')!).state.fields.find((field: { id: string }) => field.id === 'f4').tokens)).toEqual(savedTokens);
+
+  await page.getByRole('button', { name: 'Xóa công thức' }).click();
+  await page.getByRole('button', { name: 'Chèn trường Số lượng' }).click();
+  await page.getByRole('button', { name: 'Chèn Nhân' }).click();
+  await page.getByRole('button', { name: 'Chèn trường Đơn giá' }).click();
+  await expect(input).toHaveValue('[Số lượng] * [Đơn giá]');
+});
+
+test('formula autocomplete keeps cycle-causing formulas visible but prevents using them', async ({ page }) => {
+  await cleanV6(page);
+  await page.getByRole('button', { name: 'Chỉnh công thức Thành tiền' }).click();
+  const input = page.getByRole('combobox', { name: 'Nhập công thức' });
+  await input.fill('[');
+  const dependent = page.getByRole('option', { name: /Tiền chiết khấu.*Tạo vòng tham chiếu/ });
+  await expect(dependent).toBeVisible();
+  await expect(dependent).toHaveAttribute('aria-disabled', 'true');
+
+  await input.fill('[Tiền chiết khấu]');
+  await expect(page.getByRole('complementary', { name: 'Setup công thức' })).toContainText('tham chiếu vòng');
+  await expect(page.getByRole('button', { name: 'Áp dụng', exact: true })).toBeDisabled();
 });
 
 test('v2 local state is backed up and migrated idempotently to formOrder', async ({ page }) => {

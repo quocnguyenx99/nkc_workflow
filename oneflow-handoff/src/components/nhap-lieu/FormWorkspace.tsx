@@ -1,7 +1,10 @@
 import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { Eye } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 import type { Field } from '@/lib/formula';
 import { SortableFieldCard } from './FieldCard';
+import { FormPreviewModal } from './FormPreviewModal';
 
 export function FormWorkspace({
   fields,
@@ -15,7 +18,6 @@ export function FormWorkspace({
   onOpenData,
   onOpenFormula,
   onOpenProperties,
-  onExpand,
   onLoadTemplate,
 }: {
   fields: Field[];
@@ -29,21 +31,29 @@ export function FormWorkspace({
   onOpenData: () => void;
   onOpenFormula: () => void;
   onOpenProperties: () => void;
-  onExpand: () => void;
   onLoadTemplate: () => void;
 }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const previewButtonRef = useRef<HTMLButtonElement>(null);
   const { setNodeRef: setFormRef } = useDroppable({ id: 'form' });
   const { setNodeRef: setEndRef, isOver: isEndOver } = useDroppable({ id: 'form-end' });
   const dataCount = placedFields.filter((field) => field.kind !== 'formula').length;
   const formulaCount = placedFields.length - dataCount;
+  const closePreview = useCallback(() => {
+    setPreviewOpen(false);
+    window.requestAnimationFrame(() => previewButtonRef.current?.focus());
+  }, []);
   return (
     <section aria-label="Form Workspace" className="v6-form-workspace">
       <header className="v6-form-toolbar">
         <div><div className="flex items-center gap-2"><span className="v6-step is-dark">4</span><h2>Form Workspace</h2></div><p>{dataCount} trường nhập · {formulaCount} trường tự tính</p></div>
         <div className="v6-form-toolbar-actions">
+          <button ref={previewButtonRef} type="button" className="v6-preview-button" onClick={() => setPreviewOpen(true)} aria-haspopup="dialog">
+            <Eye size={15} aria-hidden="true" />
+            Xem trước
+          </button>
           <button type="button" onClick={onOpenData} className="v6-compact-only">+ Dữ liệu</button>
           <button type="button" onClick={onOpenFormula} className="v6-compact-only">ƒx Công thức</button>
-          <button type="button" onClick={onExpand} aria-label="Mở rộng Form Workspace">Mở rộng ↗</button>
         </div>
       </header>
       <main className="system-scrollbar builder-canvas-pane" data-dnd-scroll="true">
@@ -66,6 +76,7 @@ export function FormWorkspace({
           </section>
         </div>
       </main>
+      <FormPreviewModal fields={fields} placedFields={placedFields} open={previewOpen} onClose={closePreview} />
     </section>
   );
 }
